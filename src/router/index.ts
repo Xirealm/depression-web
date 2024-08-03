@@ -17,7 +17,24 @@ const router = createRouter({
     {
       path: '/doctor',
       name: 'doctor',
-      component: () => import('../views/doctor/DoctorView.vue')
+      component: () => import('../views/doctor/DoctorView.vue'),
+      children: [
+        {
+          path: 'patientManagement',
+          name: 'patientManagement',
+          component: () => import('../views/doctor/patientManagement/PatientManagementView.vue')
+        },
+        {
+          path: 'knowledgeManagement',
+          name: 'knowledgeManagement',
+          component: () => import('../views/doctor/knowledgeManagement/KnowledgeManagementView.vue')
+        },
+        {
+          path: 'accountManagement',
+          name: 'accountManagement',
+          component: () => import('../views/doctor/accountManagement/AccountManagementView.vue')
+        }
+      ]
     },
     {
       path: '/patient',

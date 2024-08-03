@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import Header from './components/Header.vue';
+import { RouterView } from 'vue-router';
 </script>
 <template>
-  <div class="">
-    我是医生
-  </div>
+  <Header />
+  <main class="main">
+    <RouterView/>
+  </main>
 </template>
 <style lang="scss" scoped>
-
+.main{
+  height: 90vh;
+}
 </style>
