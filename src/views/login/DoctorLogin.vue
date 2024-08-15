@@ -1,41 +1,22 @@
-<script>
+<script setup lang="ts">
 import { useRouter } from 'vue-router';
 import Button from './components/Button.vue';
 import Header from './components/Header.vue';
 
-export default {
-    components: {
-        Button,
-        Header
-    },
-    setup() {
-        const router = useRouter();
-
-        // 返回选择角色
-        const goToLogin = () => {
-            router.push('/Login'); // 路由配置中的路径
-        };
-
-        // 登录成功
-        const goToDoctorView = () => {
-            router.push('../views/doctor/DoctorView.vue'); // 路由配置中的路径
-        };
-
-        return {
-            goToLogin,
-            goToDoctorView // 返回登录跳转函数
-        };
-    }
-}
+const router = useRouter();
+// 返回选择角色
+const goToLogin = () => {
+    router.push('/login'); // 路由配置中的路径
+};
+// 登录成功
+const goToDoctorView = () => {
+    router.push('/doctor/patientManagement'); // 路由配置中的路径
+};
 </script>
 
 <template>
-    <form action="">
-        <Header></Header>
-        <br>
-        <br>
-        <br>
-        <br>
+    <Header></Header>
+    <div class="container">
         <div style="padding-top: 0;">
             <Button class="return-button" @click="goToLogin">
                 返回
@@ -60,10 +41,13 @@ export default {
                 确定
             </Button>
         </div>
-    </form>
+    </div>
 </template>
 
-<style>
+<style scoped>
+.container{
+    margin-top: 100px;
+}
 .button-container {
     height: 100px;
     width: 100vw;

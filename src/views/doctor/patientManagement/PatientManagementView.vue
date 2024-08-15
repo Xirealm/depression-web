@@ -270,9 +270,9 @@
 
 
 
-<script setup scope="ts">
+<script setup lang="ts">
 import { computed, reactive, ref, watchEffect } from "vue"
-import dataTable1 from '../../../../.vscode/api/dataTable1.js'
+// import dataTable1 from '../../../../.vscode/api/dataTable1.js'
 import { useRouter } from "vue-router";
 
 
@@ -284,7 +284,7 @@ const form = reactive({
   phase: ''
 })
 const dataTable = reactive({
-  list: dataTable1,
+  list: [],
   pageSize: 9,
   currentPage: 1
 })

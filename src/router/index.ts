@@ -14,15 +14,15 @@ const router = createRouter({
       name: 'login',
       component: LoginView
     },
-        {
-      path: '/Doctorlogin',
-      name: 'Doctorlogin',
-    component: () => import('../views/login/DoctorLogin.vue'),
+    {
+      path: '/doctorLogin',
+      name: 'doctorLogin',
+      component: () => import('../views/login/DoctorLogin.vue'),
     },
-            {
-      path: '/Patientlogin',
-      name: 'Patientlogin',
-    component: () => import('../views/login/PatientLogin.vue'),
+    {
+      path: '/patientLogin',
+      name: 'patientLogin',
+      component: () => import('../views/login/PatientLogin.vue'),
     },
     {
       path: '/doctor',
