@@ -20,7 +20,7 @@ const router = createRouter({
       component: () => import('../views/doctor/DoctorView.vue'),
       children: [
         {
-          path: 'patientManagement',
+          path: '/patientManagement',
           name: 'patientManagement',
           component: () => import('../views/doctor/patientManagement/PatientManagementView.vue')
         },
