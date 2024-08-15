@@ -14,13 +14,23 @@ const router = createRouter({
       name: 'login',
       component: LoginView
     },
+        {
+      path: '/Doctorlogin',
+      name: 'Doctorlogin',
+    component: () => import('../views/login/DoctorLogin.vue'),
+    },
+            {
+      path: '/Patientlogin',
+      name: 'Patientlogin',
+    component: () => import('../views/login/PatientLogin.vue'),
+    },
     {
       path: '/doctor',
       name: 'doctor',
       component: () => import('../views/doctor/DoctorView.vue'),
       children: [
         {
-          path: '/patientManagement',
+          path: 'patientManagement',
           name: 'patientManagement',
           component: () => import('../views/doctor/patientManagement/PatientManagementView.vue')
         },

@@ -1,4 +1,5 @@
 <script>
+import { useRouter } from 'vue-router';
 import Button from './components/Button.vue';
 import Header from './components/Header.vue';
 
@@ -6,6 +7,24 @@ export default {
     components: {
         Button,
         Header
+    },
+    setup() {
+        const router = useRouter();
+
+        // 返回选择角色
+        const goToLogin = () => {
+            router.push('/Login'); // 路由配置中的路径
+        };
+
+        // 登录成功
+        const goToPatientView = () => {
+            router.push('../views/patient/PatientView.vue'); // 路由配置中的路径
+        };
+
+        return {
+            goToLogin,
+            goToPatientView // 返回登录跳转函数
+        };
     }
 }
 </script>
@@ -18,7 +37,7 @@ export default {
         <br>
         <br>
         <div style="padding-top: 0;">
-            <Button class="return-button">
+            <Button class="return-button" @click="goToLogin">
                 返回
             </Button>
         </div>
@@ -30,7 +49,7 @@ export default {
             <input class="input-field" placeholder="请输入病历号" clearable />
         </div>
         <div class="button-container">
-            <Button>
+            <Button @click="goToPatientView">
                 确定
             </Button>
         </div>
