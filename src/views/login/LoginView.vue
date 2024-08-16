@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import Header from './components/Header.vue';
-import Button from "./components/Button.vue"
-</script>
 <template>
   <div style="height: 130px; width: 100vw; background-color:#49998F;  line-height: 130px;">
     <span style="color: aliceblue; font-size: 180%; padding-left: 10%;">
@@ -12,14 +8,21 @@ import Button from "./components/Button.vue"
         请选择您的角色
       </span>
     </div>
-      <div style="height: 160px;width: 100vw; display: flex; align-items: center; justify-content: center;">
-        <!-- 医生登录按钮 -->
-        <el-button style="  margin-right: 120px;" color="#49998F" size="large" class="btn" plain>医生</el-button>
-        <!-- 患者登录按钮 -->
-        <el-button style="  margin-left: 120px;" color="#49998F" size="large" class="btn" plain>患者</el-button>
-      </div>
+    <div style="height: 160px;width: 100vw; display: flex; align-items: center; justify-content: center;">
+      <!-- 医生登录按钮 -->
+      <el-button style="margin-right: 120px;" color="#49998F" size="large" class="btn"
+        plain>医生</el-button>
+      <!-- 患者登录按钮 -->
+      <el-button style="  margin-left: 120px;" color="#49998F" size="large" class="btn" plain>患者</el-button>
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import Header from './components/Header.vue';
+import Button from "./components/Button.vue"
+</script>
+
 <style lang="scss" scoped>
 .tip{
   margin: 20px;
