@@ -15,6 +15,16 @@ const router = createRouter({
       component: LoginView
     },
     {
+      path: '/doctorLogin',
+      name: 'doctorLogin',
+      component: () => import('../views/login/DoctorLogin.vue'),
+    },
+    {
+      path: '/patientLogin',
+      name: 'patientLogin',
+      component: () => import('../views/login/PatientLogin.vue'),
+    },
+    {
       path: '/doctor',
       name: 'doctor',
       component: () => import('../views/doctor/DoctorView.vue'),
