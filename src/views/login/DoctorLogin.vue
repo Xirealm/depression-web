@@ -1,85 +1,57 @@
 <script setup lang="ts">
+import { ref } from "vue"
 import { useRouter } from 'vue-router';
 import Button from './components/Button.vue';
 import Header from './components/Header.vue';
 
 const router = useRouter();
-// 返回选择角色
-const goToLogin = () => {
+const returnLogin = () => {
     router.push('/login'); // 路由配置中的路径
 };
-// 登录成功
-const goToDoctorView = () => {
+
+const loginData = ref({
+    username: '',
+    password: '',
+})
+const login = () => {
+    console.log(loginData.value);
     router.push('/doctor/patientManagement'); // 路由配置中的路径
 };
 </script>
 
 <template>
     <Header></Header>
-    <div class="container">
-        <div style="padding-top: 0;">
-            <Button class="return-button" @click="goToLogin">
-                返回
-            </Button>
+    <Button class="mx-[15vw] mt-[10vh]" @click="returnLogin">
+        返回
+    </Button>
+    <div class="flex w-1/4 flex-wrap mx-auto justify-center">
+        <div class="flex flex-col w-full text-xl">
+            <label class="my-4 font-bold text-xl">
+                账户名
+            </label>
+            <input 
+                v-model="loginData.username" 
+                class="w-full border-b-gray-600 border-b pb-1" 
+                placeholder="请输入账户名"
+            />
         </div>
-        <!-- 按钮 -->
-        <div class="bingli">
-            <div class="bingli-label">
-                <p>账户名</p>
-            </div>
-            <input class="input-field" placeholder="请输入账户名" clearable />
+        <div class="flex flex-col w-full text-xl">
+            <label class="my-4 font-bold text-xl">
+                密码
+            </label>
+            <input 
+                v-model="loginData.password" 
+                class="w-full border-b-gray-600 border-b pb-1" 
+                placeholder="请输入密码"
+            />
         </div>
-        <div class="bingli">
-            <div class="bingli-label">
-                <p>病历号</p>
-            </div>
-            <input class="input-field" placeholder="请输入病历号" clearable />
-        </div>
-        <div style="text-align: center; height: 10px; color: rgba(0, 0, 0, 0.4); font-size: 14px;">忘记密码请联系管理员</div>
-        <div class="button-container">
-            <Button @click="goToDoctorView">
-                确定
-            </Button>
-        </div>
+        <span class="w-full text-center tracking-wide mt-4 text-gray-600">忘记密码请联系管理员</span>
+        <Button class="mt-8" @click="login">
+            确定
+        </Button>
     </div>
 </template>
 
-<style scoped>
-.container{
-    margin-top: 100px;
-}
-.button-container {
-    height: 100px;
-    width: 100vw;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.return-button{
-    margin-left: 15vw;
-}
-.bingli {
-    width: 100vw;
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.bingli-label p {
-    font-size: 160%;
-    height: 50px;
-    margin: 0;
-    /* 去掉默认的上下边距 */
-    position: relative;
-    left: -145px;
-    /* 向左移动20px */
-}
-.input-field {
-    width: 360px;
-    border: none;
-    outline: none;
-    font-size: 120%;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.4);
-}
+<style scoped lang="scss">
+
 </style>
