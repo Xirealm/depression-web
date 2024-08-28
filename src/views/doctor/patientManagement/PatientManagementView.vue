@@ -3,22 +3,22 @@
     <div class="box">
       <el-form :model="form" label-width="auto" class="forms" :inline="true">
         <el-row :gutter="20">
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="患者姓名">
               <el-input v-model="form.name" style="width: 200px;" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="病例号">
               <el-input v-model="form.num" style="width: 200px;" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4" style="text-align: right;">
             <el-form-item label="性别">
               <el-input v-model="form.gender" style="width: 200px;" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="治疗阶段" style="width: 300px;">
 
               <el-select  v-model="form.phase" placeholder="未开始">
@@ -29,17 +29,19 @@
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" @click="searchPatients">查询</el-button>
+              <el-button type="primary" @click="addDialogVisible = true">新增</el-button>
+              <el-button type="primary" @click="handleBatchDelete">批量删除</el-button>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <!-- <el-row :gutter="20">
           <el-col :span="6" :offset="18">
             <el-form-item>
               <el-button type="primary" @click="addDialogVisible = true">新增</el-button>
               <el-button type="primary" @click="handleBatchDelete">批量删除</el-button>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-form>
     </div>
     <div>
