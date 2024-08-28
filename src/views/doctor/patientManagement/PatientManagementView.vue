@@ -46,10 +46,10 @@
     </div>
     <div>
       <el-table :data="paginateData">
-        <el-table-column label="选择" width="50px">
+        <el-table-column label="选择" width="60">
           <template #default="scope">
             <el-checkbox v-model="selectedPatients[scope.$index]" 
-            @change="handleSelectionChange($event,scope.$index)">
+              @change="handleSelectionChange($event,scope.$index)">
             </el-checkbox>
           </template>
         </el-table-column>
@@ -583,7 +583,7 @@ const handleEndTreatment=(patient)=>{
 .box {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  padding-top: 20px;
 }
 
 .forms {

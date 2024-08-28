@@ -23,7 +23,7 @@ import { RouterLink } from 'vue-router';
 <style lang="scss" scoped>
 .header{
     background-color: #49998F;
-    height: 7vh;
+    height: 10vh;
     line-height: 10vh;
     color: white;
 }
