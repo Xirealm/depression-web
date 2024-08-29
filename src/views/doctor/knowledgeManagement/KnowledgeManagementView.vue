@@ -19,27 +19,18 @@
       </div>
     </div>
   </div>
-  <el-dialog v-model="dialogFormVisible" :title="testname" width="70%">
-    <!-- <div style="font-size: 18px; color: #303133;">请根据您最近两周的实际情况，选择对应的选项:</div>
-    <div v-for="(item, index) in test" :key="index" class="form">
-      <div class="question">{{index+1}}.提问这是什么？</div>
-      <el-radio-group v-model="radio1" class="el-radio-group" size="large">
-        <el-radio value="1" size="large">完全不会</el-radio>
-        <el-radio value="2" size="large">好几天</el-radio>
-        <el-radio value="3" size="large">一半以上</el-radio>
-        <el-radio value="4" size="large">几乎每天</el-radio>
-      </el-radio-group>
-    </div> -->
-    <survey :infor="test"></survey>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="commit">
-          提交
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
+            <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" destroy-on-close="true">
+            <survey :infor="test" @sendanswer="getanswer"></survey>
+            <!-- <video v-else src="" /> -->
+            <template #footer>
+              <div class="dialog-footer">
+                <el-button @click="cancel">取消</el-button>
+                <el-button type="primary" @click="commit">
+                  提交
+                </el-button>
+              </div>
+            </template>
+          </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -50,7 +41,11 @@ import { ref, reactive } from 'vue'
 import survey from '../knowledgeManagement/components/survey.vue'
 const dialogFormVisible = ref(false)
 const testname = ref('')
-const test = reactive(['1','2','3'])
+const test = reactive<Object[]>([{}])
+const commitanswer = ref<string[]>([])
+const getanswer = (answer:string[]) =>{
+  commitanswer.value = answer
+}
 type sou = {
   title:string,
   tests:string[]
@@ -77,6 +72,8 @@ const open = (select:string) => {
   testname.value = select
 }
 const commit = () =>{
+  console.log(commitanswer.value)
+  // if(commitanswer.value.length<111111)
   dialogFormVisible.value = false
 }
 const cancel = () =>{
