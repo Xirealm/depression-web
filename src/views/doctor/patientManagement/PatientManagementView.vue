@@ -3,22 +3,22 @@
     <div class="box">
       <el-form :model="form" label-width="auto" class="forms" :inline="true">
         <el-row :gutter="20">
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="患者姓名">
               <el-input v-model="form.name" style="width: 200px;" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="病例号">
               <el-input v-model="form.num" style="width: 200px;" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4" style="text-align: right;">
             <el-form-item label="性别">
               <el-input v-model="form.gender" style="width: 200px;" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="治疗阶段" style="width: 300px;">
 
               <el-select  v-model="form.phase" placeholder="未开始">
@@ -29,25 +29,27 @@
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" @click="searchPatients">查询</el-button>
+              <el-button type="primary" @click="addDialogVisible = true">新增</el-button>
+              <el-button type="primary" @click="handleBatchDelete">批量删除</el-button>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <!-- <el-row :gutter="20">
           <el-col :span="6" :offset="18">
             <el-form-item>
               <el-button type="primary" @click="addDialogVisible = true">新增</el-button>
               <el-button type="primary" @click="handleBatchDelete">批量删除</el-button>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-form>
     </div>
     <div>
       <el-table :data="paginateData">
-        <el-table-column label="选择" width="50px">
+        <el-table-column label="选择" width="60">
           <template #default="scope">
             <el-checkbox v-model="selectedPatients[scope.$index]" 
-            @change="handleSelectionChange($event,scope.$index)">
+              @change="handleSelectionChange($event,scope.$index)">
             </el-checkbox>
           </template>
         </el-table-column>
@@ -239,19 +241,28 @@
   <el-dialog
   v-model="assignTreatmentDialogVisible"
   title="下发治疗"
+  class="send"
   @close="resetAssignTreatment">
     <el-checkbox-group v-model="selectedTreatments">
       <el-checkbox 
+      v-model="selectedTreatments"
       v-for="item in treatmentOptions"
       :value="item"
-      :key="item">
+      :key="item"
+      @change="handleTreatmentChange($event, item)">
       {{ item }}
       </el-checkbox>
     </el-checkbox-group>
-    <span slot="footer" class="dialog-footer">
+    <!-- <span slot="footer" class="dialog-footer">
       <el-button @click="assignTreatmentDialogVisible=false">取消</el-button>
       <el-button @click="confirmAssignTreatment">确定</el-button>
-    </span>
+    </span> -->
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="assignTreatmentDialogVisible=false">取消</el-button>
+        <el-button @click="confirmAssignTreatment">确定</el-button>
+      </div>
+    </template>
   </el-dialog>
   
   <el-dialog
@@ -272,11 +283,11 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watchEffect } from "vue"
-// import dataTable1 from '../../../../.vscode/api/dataTable1.js'
+import dataTable1 from '../../../utils/dataTable1.js'
 import { useRouter } from "vue-router";
 
 
-const route = useRouter()
+const router = useRouter()
 const form = reactive({
   name: '',
   num: '',
@@ -284,7 +295,7 @@ const form = reactive({
   phase: ''
 })
 const dataTable = reactive({
-  list: [],
+  list: dataTable1,
   pageSize: 9,
   currentPage: 1
 })
@@ -398,7 +409,7 @@ const viewPatientForm=reactive({
   marriage:''
 })
 const handleView=(patient)=>{
-  console.log(patient)
+  // console.log(patient)
   for(const key in viewPatientForm){
     if(patient[key]){
       viewPatientForm[key]=patient[key]
@@ -525,11 +536,29 @@ const openAssignTreatmentDialog = (patient) => {
   selectedPatient.value=patient
   assignTreatmentDialogVisible.value = true;
 };
-const confirmAssignTreatment = () => {
-  assignedTreatments.value = selectedTreatments.value.slice()
-  treatmentPlanDialogVisible.value = true;
-  assignTreatmentDialogVisible.value = false;
+// const confirmAssignTreatment = () => {
+//   assignedTreatments.value = selectedTreatments.value.slice()
+//   treatmentPlanDialogVisible.value = true;
+//   assignTreatmentDialogVisible.value = false;
  
+// };
+
+const handleTreatmentChange=(event,treatment)=>{
+  if (event) {
+    // 如果选中，则添加到assignedTreatments中
+    assignedTreatments.value.push(treatment);
+  } else {
+    // 如果取消选中，则从assignedTreatments中删除
+    const index = assignedTreatments.value.indexOf(treatment);
+    if (index > -1) {
+      assignedTreatments.value.splice(index, 1);
+    }
+  }
+}
+// 确认下发治疗，显示治疗计划对话框
+const confirmAssignTreatment = () => {
+  // 可以在这里添加其他逻辑，比如发送数据到服务器等
+  treatmentPlanDialogVisible.value = true;
 };
 const closeTreatmentPlanDialog = () => {
   treatmentPlanDialogVisible.value = false;
@@ -554,7 +583,7 @@ const handleEndTreatment=(patient)=>{
 .box {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  padding-top: 20px;
 }
 
 .forms {
@@ -576,4 +605,14 @@ label {
 .link-space {
   margin-right: 10px;
 }
+.send .el-checkbox-group {
+  display: flex;
+  flex-wrap: wrap; // 弹性盒子包装
+  gap: 10px; // 弹性盒子间距
+}
+.send .el-checkbox {
+  width: calc(50% - 5px); // 弹性盒子宽度，可根据需要调整
+}
+
+
 </style>

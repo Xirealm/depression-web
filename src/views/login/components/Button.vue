@@ -6,8 +6,9 @@
 <style lang="scss" scoped>
 .btn{
   width:200px;
-  height:50px;
+  height:60px;
   border-radius: 15px;
-  font-size: 22px;
+  font-size: 24px;
+  letter-spacing: 3px;
 }
 </style>
