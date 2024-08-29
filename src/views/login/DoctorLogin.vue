@@ -50,12 +50,20 @@ const login = async () => {
             />
         </div>
         <span class="w-full text-center tracking-wide mt-4 text-gray-600">忘记密码请联系管理员</span>
-        <Button class="mt-8" @click="login">
+        <el-button 
+            @click="login" 
+            color="#49998F" size="large" class="btn mt-8">
             确定
-        </Button>
+        </el-button>
     </div>
 </template>
 
 <style scoped lang="scss">
-
+.btn{
+  width:200px;
+  height:60px;
+  border-radius: 15px;
+  font-size: 24px;
+  letter-spacing: 3px;
+}
 </style>

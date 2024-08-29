@@ -39,13 +39,21 @@ const login = async () => {
                 placeholder="请输入病历号"
             />
         </div>
-        <div class="mt-8">
-            <Button @click="login">
-                确定
-            </Button>
-        </div>
+        <el-button 
+            type="primary"
+            @click="login" 
+            color="#49998F" size="large" class="btn mt-8">
+            确定
+        </el-button>
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+.btn{
+  width:200px;
+  height:60px;
+  border-radius: 15px;
+  font-size: 24px;
+  letter-spacing: 3px;
+}
 </style>
