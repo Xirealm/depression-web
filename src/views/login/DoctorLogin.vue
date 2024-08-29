@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { useRouter } from 'vue-router';
 import Button from './components/Button.vue';
 import Header from './components/Header.vue';
+import { postDoctorLoginAPI } from '@/api/user';
 
 const router = useRouter();
 const returnLogin = () => {
@@ -13,9 +14,12 @@ const loginData = ref({
     username: '',
     password: '',
 })
-const login = () => {
-    console.log(loginData.value);
-    router.push('/doctor/patientManagement'); // 路由配置中的路径
+const login = async () => {
+    // const res = await postDoctorLoginAPI(loginData.value.username, loginData.value.password)
+    // if (res.code === 0) {
+    //     router.push('/doctor/patientManagement');
+    // }
+    router.push('/doctor/patientManagement');
 };
 </script>
 

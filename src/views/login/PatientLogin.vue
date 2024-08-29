@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { useRouter } from 'vue-router';
 import Button from './components/Button.vue';
 import Header from './components/Header.vue';
+import { getPatientLoginAPI } from "@/api/user"
 
 const router = useRouter();
 // 返回选择角色
@@ -11,11 +12,14 @@ const returnLogin = () => {
 };
 
 const loginData = ref({
-    number:""
+    medicalRecord:""
 })
-const login = () => {
-    console.log(loginData.value);
-    router.push('/patient'); // 路由配置中的路径
+const login = async () => {
+    // const res = await getPatientLoginAPI(loginData.value.medicalRecord)
+    // if (res.code === 0) {
+    //     router.push('/patient');
+    // }
+    router.push('/patient');
 };
 </script>
 
@@ -30,7 +34,7 @@ const login = () => {
                 病历号
             </label>
             <input 
-                v-model="loginData.number" 
+                v-model="loginData.medicalRecord" 
                 class="w-full border-b-gray-600 border-b pb-1" 
                 placeholder="请输入病历号"
             />
