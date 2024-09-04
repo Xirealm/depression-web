@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^2.3.18",
     "axios": "^1.7.5",
     "element-plus": "^2.7.7",
     "node": "^22.7.0",
