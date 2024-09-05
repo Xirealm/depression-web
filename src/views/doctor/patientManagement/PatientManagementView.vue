@@ -1,27 +1,27 @@
 <template>
   <div>
     <div class="box">
+      <!-- 查询 -->
       <el-form :model="form" label-width="auto" class="forms" :inline="true">
         <el-row :gutter="20">
           <el-col :span="5">
             <el-form-item label="患者姓名">
-              <el-input v-model="form.name" style="width: 200px;" />
+              <el-input v-model="form.name" style="width: 200px" />
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item label="病例号">
-              <el-input v-model="form.num" style="width: 200px;" />
+              <el-input v-model="form.madicalRecord" style="width: 200px" />
             </el-form-item>
           </el-col>
-          <el-col :span="4" style="text-align: right;">
+          <el-col :span="4" style="text-align: right">
             <el-form-item label="性别">
-              <el-input v-model="form.gender" style="width: 200px;" />
+              <el-input v-model="form.sex" style="width: 200px" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="治疗阶段" style="width: 300px;">
-
-              <el-select  v-model="form.phase" placeholder="未开始">
+            <el-form-item label="治疗阶段" style="width: 300px">
+              <el-select v-model="form.treatmentPhase" placeholder="未开始">
                 <el-option v-for="n in 5" :label="`第${n}次`" :value="`time${n}`" :key="n" />
               </el-select>
             </el-form-item>
@@ -29,421 +29,547 @@
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" @click="searchPatients">查询</el-button>
-              <el-button type="primary" @click="addDialogVisible = true">新增</el-button>
-              <el-button type="primary" @click="handleBatchDelete">批量删除</el-button>
+              <el-button type="primary" @click="getAddPatient">新增</el-button>
+              <el-button type="primary" @click="getDelete">批量删除</el-button>
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- <el-row :gutter="20">
-          <el-col :span="6" :offset="18">
-            <el-form-item>
-              <el-button type="primary" @click="addDialogVisible = true">新增</el-button>
-              <el-button type="primary" @click="handleBatchDelete">批量删除</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row> -->
       </el-form>
     </div>
     <div>
-      <el-table :data="paginateData">
-        <el-table-column label="选择" width="60">
-          <template #default="scope">
-            <el-checkbox v-model="selectedPatients[scope.$index]" 
-              @change="handleSelectionChange($event,scope.$index)">
-            </el-checkbox>
-          </template>
-        </el-table-column>
+      <!-- 表格 -->
+      <el-table :data="dataTable.list" @selection-change="handleSelectionChange">
+        <el-table-column type=selection width="55"></el-table-column>
         <el-table-column type="index" label="序号" width="100px"></el-table-column>
         <el-table-column label="姓名" prop="name"></el-table-column>
-        <el-table-column label="病历号" prop="num"></el-table-column>
-        <el-table-column label="性别" prop="gender"></el-table-column>
+        <el-table-column label="病历号" prop="madicalRecord"></el-table-column>
+        <el-table-column label="性别" prop="sex"></el-table-column>
         <el-table-column label="年龄" prop="age"></el-table-column>
-        <el-table-column label="民族" prop="nationality"></el-table-column>
-        <el-table-column label="婚姻状况" prop="marriage"></el-table-column>
-        <el-table-column label="职业状况" prop="occupation"></el-table-column>
-        <el-table-column label="治疗阶段" prop="phaseText">
+        <el-table-column label="民族" prop="nation"></el-table-column>
+        <el-table-column label="婚姻状况" prop="martalStatus"></el-table-column>
+        <el-table-column label="职业状况" prop="vocationStatus"></el-table-column>
+        <el-table-column label="治疗阶段" prop="treatmentPhase">
           <template #default="scope" >
-            <div v-if="scope.row.phase?.isEnded">已结束</div>
-            <span v-else-if="scope.row.phase?.treatmentCount>0">第{{ scope.row.phase.treatmentCount }}次</span>
-            <span v-else>未开始</span>
+            <!-- <div v-if="scope.row.phase?.isEnded">已结束</div> -->
+            <span >{{ scope.row.treatmentPhase }}</span>
+            <!-- <span v-else>未开始</span> -->
           </template>
         </el-table-column>
         <el-table-column label="治疗详情" prop="detail">
           <template #default="scope">
-            <el-link type="primary" @click="del(scope.row)">治疗情况</el-link>
+            <el-link type="primary" @click="test(scope.row)">治疗情况</el-link>
+        
           </template>
-
         </el-table-column>
+
         <el-table-column label="个人信息" prop="assignment">
           <template #default="scope">
-            <el-link type="primary" class="link-space" @click="handleView(scope.row)">查看信息 </el-link>
+            <el-link type="primary" class="link-space" @click="lookInfo(scope.row)"
+              >查看信息
+            </el-link>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="250px" class="caozuo">
           <template #default="scope">
             <el-link type="primary" class="link-space" @click="openAssignTreatmentDialog(scope.row)">下发治疗</el-link>
-            <el-link type="primary" class="link-space" @click="handleEndTreatment(scope.row)">结束治疗 </el-link>
-            <el-link type="primary" class="link-space" @click="deletePatient(scope.row.id)">删除</el-link>
+            <el-link type="primary" class="link-space" @click="handleEndTreatment(scope.row)">结束治疗
+            </el-link>
+            <el-link type="primary" class="link-space" @click="getDeleteById(scope.row.id)">删除</el-link>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination background :page-size="dataTable.pageSize" :current-page="dataTable.currentPage"
-        layout="prev, pager, next" :total="total" @current-change="handlePageChange" />
+      <el-pagination
+        background
+        :page-size="page.pageSize"
+        :current-page="page.currentPage"
+        layout="prev, pager, next"
+        :total="total"
+        @current-change="handlePageChange"
+        @size-change="handleSizeChange"
+      />
+      
     </div>
-
   </div>
-  <el-dialog v-model="addDialogVisible" title="新增患者" @close="resetNewPatientForm">
-    <el-form :model="newPatientForm" label-width="120px">
-      <el-form-item label="姓名">
-        <el-input v-model="newPatientForm.name"></el-input>
-      </el-form-item>
-      <el-form-item label="病历号">
-        <el-input v-model="newPatientForm.num"></el-input>
-      </el-form-item>
-      <el-form-item label="身份证号">
-        <el-input v-model="newPatientForm.idNumber"></el-input>
-      </el-form-item>
-      <el-form-item label="电话号码">
-        <el-input v-model="newPatientForm.phone"></el-input>
-      </el-form-item>
-      <el-form-item label="性别">
-        <el-select v-model="newPatientForm.gender">
-          <el-option label="男" value="男"></el-option>
-          <el-option label="女" value="女"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="出生日期">
-        <el-date-picker v-model="newPatientForm.birthDate" type="date" placeholder="选择日期">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="民族">
-        <el-input v-model="newPatientForm.nationality"></el-input>
-      </el-form-item>
-      <el-form-item label="婚姻状况">
-        <el-select v-model="newPatientForm.marriage">
-          <el-option label="未婚" value="未婚"></el-option>
-          <el-option label="已婚" value="已婚"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="职业状况">
-        <el-input v-model="newPatientForm.occupation"></el-input>
-      </el-form-item>
-      <el-form-item label="家庭月均收入">
-        <el-input v-model="newPatientForm.monthlyIncome"></el-input>
-      </el-form-item>
-      <el-form-item label="文化程度">
-        <el-input v-model="newPatientForm.education"></el-input>
-      </el-form-item>
-      <el-form-item label="家庭住址">
-        <el-input type="textarea" v-model="newPatientForm.address"></el-input>
-      </el-form-item>
-      <el-form-item label="年龄">
-        <el-input v-model="newPatientForm.age"></el-input>
-      </el-form-item>
-    </el-form>
-    <template v-slot:footer>
-        <span class="dialog-footer">
-          <el-button @click="addDialogVisible = false">取消</el-button>
-          <el-button @click="newPatientForm.id?updatePatient():addNewPatient()" type="primary">确定</el-button>
-        </span>
-      </template>
-  </el-dialog>
-  <el-dialog v-model="viewDialogVisible" title="患者信息" @close="resetViewForm">
+  
+  <!-- 修改患者信息 -->
+  <el-dialog v-model="viewDialogVisible" title="患者信息" @close="viewDialogVisible = false">
     <el-form :model="viewPatientForm" label-width="120px">
       <el-form-item label="姓名">
         <el-input v-model="viewPatientForm.name"></el-input>
       </el-form-item>
       <el-form-item label="病历号">
-        <el-input v-model="viewPatientForm.num"></el-input>
+        <el-input v-model="viewPatientForm.id"></el-input>
       </el-form-item>
       <el-form-item label="身份证号">
         <el-input v-model="viewPatientForm.idNumber"></el-input>
       </el-form-item>
       <el-form-item label="电话号码">
-        <el-input v-model="viewPatientForm.phone"></el-input>
+        <el-input v-model="viewPatientForm.phoneNumber"></el-input>
       </el-form-item>
       <el-form-item label="性别">
-        <el-select v-model="viewPatientForm.gender">
+        <el-select v-model="viewPatientForm.sex">
           <el-option label="男" value="男"></el-option>
           <el-option label="女" value="女"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="出生日期">
-        <el-date-picker v-model="viewPatientForm.birthDate" type="date" placeholder="选择日期">
+        <el-date-picker v-model="viewPatientForm.brithDate" type="date" placeholder="选择日期">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="民族">
-        <el-input v-model="viewPatientForm.nationality"></el-input>
+        <el-input v-model="viewPatientForm.nation"></el-input>
       </el-form-item>
       <el-form-item label="婚姻状况">
-        <el-select v-model="viewPatientForm.marriage">
+        <el-select v-model="viewPatientForm.martalStatus">
           <el-option label="未婚" value="未婚"></el-option>
           <el-option label="已婚" value="已婚"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="职业状况">
-        <el-input v-model="viewPatientForm.occupation"></el-input>
+        <el-input v-model="viewPatientForm.vocationStatus"></el-input>
+      </el-form-item>
+      <el-form-item label="治疗阶段">
+        <el-input v-model="viewPatientForm.treatmentPhase"></el-input>
       </el-form-item>
       <el-form-item label="家庭月均收入">
-        <el-input v-model="viewPatientForm.monthlyIncome"></el-input>
+        <el-input v-model="viewPatientForm.monthIncome"></el-input>
       </el-form-item>
       <el-form-item label="文化程度">
-        <el-input v-model="viewPatientForm.education"></el-input>
+        <el-input v-model="viewPatientForm.educationDegree"></el-input>
       </el-form-item>
       <el-form-item label="家庭住址">
-        <el-input type="textarea" v-model="viewPatientForm.address"></el-input>
+        <el-input type="textarea" v-model="viewPatientForm.familyAddress"></el-input>
       </el-form-item>
       <el-form-item label="年龄">
         <el-input v-model="viewPatientForm.age"></el-input>
       </el-form-item>
     </el-form>
     <template v-slot:footer>
-        <span class="dialog-footer">
-          <el-button @click="viewDialogVisible= false">关闭</el-button>
-          <el-button type="primary" @click="saveEdit">保存修改</el-button>
-        </span>
-      </template>
+      <span class="dialog-footer">
+        <el-button @click="viewDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleUpdate">保存</el-button>
+      </span>
+    </template>
   </el-dialog>
-  <el-dialog 
-  v-model="treatmentDialogVisible"
-  title="治疗情况"
-  width="40%"
-  @close="closeTreatmentDialog">
+
+ <el-dialog
+    v-model="treatmentDialogVisible"
+    title="治疗情况"
+    width="40%"
+    @close="closeTreatmentDialog"
+  >
     <div>
-      <p>患者姓名：{{ selectedPatient.name }}</p>
-      <p>治疗次数：{{ selectedTreatmentSession.count }}</p>
-      <p>治疗完成时间：{{ selectedTreatmentSession.data }}</p>
-      <p>持续时间：{{ selectedTreatmentSession.duration }}min</p>
+      <p>患者姓名：</p>
+      <p>治疗次数：</p>
+      <p>治疗完成时间：</p>
+      <p>持续时间:min</p>
       <p>评估结果：</p>
       <ul>
         <li>GAD-7:轻度焦虑</li>
         <li>AIS:怀疑失眠</li>
       </ul>
       <p>PSQI:睡眠质量一般</p>
-      <p>满意指数:{{ selectedTreatmentSession.satisfaction }}</p>
+      <p>满意指数:</p>
       <p>FACT-G:生活质量良好</p>
-      <p>建议:{{ selectedTreatmentSession.advice }}</p>
+      <p>建议:</p>
       <p>RES:</p>
       <p>SDS:轻度抑郁</p>
     </div>
-    <div style="text-align: center;">
+    <div style="text-align: center">
       <el-button type="primary" @click="showExportInfo">导出</el-button>
     </div>
-    
   </el-dialog>
-  <el-dialog
-  v-model="exportInfoVisible"
-  title="导出信息"
-  @close="exportInfoVisible=false">
-  <pre>{{ exportContent }}</pre>
+  <el-dialog v-model="exportInfoVisible" title="导出信息" @close="exportInfoVisible = false">
+    <pre></pre>
   </el-dialog>
 
-  <el-dialog
-  v-model="assignTreatmentDialogVisible"
-  title="下发治疗"
-  class="send"
-  @close="resetAssignTreatment">
+ <el-dialog
+    v-model="assignTreatmentDialogVisible"
+    title="下发治疗"
+    class="send"
+    @close="resetAssignTreatment"
+  >
     <el-checkbox-group v-model="selectedTreatments">
-      <el-checkbox 
-      v-model="selectedTreatments"
-      v-for="item in treatmentOptions"
-      :value="item"
-      :key="item"
-      @change="handleTreatmentChange($event, item)">
-      {{ item }}
+      <el-checkbox
+        v-model="selectedTreatments"
+        v-for="item in treatmentOptions"
+        :value="item"
+        :key="item"
+        @change="handleTreatmentChange($event, item)"
+      >
+        {{ item }}
       </el-checkbox>
     </el-checkbox-group>
-    <!-- <span slot="footer" class="dialog-footer">
-      <el-button @click="assignTreatmentDialogVisible=false">取消</el-button>
-      <el-button @click="confirmAssignTreatment">确定</el-button>
-    </span> -->
-    <template #footer>
+   
+ <template #footer>
       <div class="dialog-footer">
-        <el-button @click="assignTreatmentDialogVisible=false">取消</el-button>
+        <el-button @click="assignTreatmentDialogVisible = false">取消</el-button>
         <el-button @click="confirmAssignTreatment">确定</el-button>
       </div>
     </template>
-  </el-dialog>
-  
-  <el-dialog
-  v-model="treatmentPlanDialogVisible"
-  title="治疗计划"
-  width="50%"
-  @close="closeTreatmentPlanDialog">
+  </el-dialog> 
+   <el-dialog
+    v-model="treatmentPlanDialogVisible"
+    title="治疗计划"
+    width="50%"
+    @close="closeTreatmentPlanDialog"
+  >
     <ol>
-      <li v-for="(treatment,index) in assignedTreatments" :key="index">
+      <li v-for="(treatment, index) in assignedTreatments" :key="index">
         {{ treatment }}
       </li>
     </ol>
+  </el-dialog> 
+<!-- 新增患者 -->
+  <el-dialog v-model="dialogVisible" title="新增患者" width="500">
+    <el-form :model="ruleForm">
+      <el-form-item label="姓名" prop="name">
+        <el-input v-model="ruleForm.name"></el-input>
+      </el-form-item>
+      <el-form-item label="病历号" prop="madicalRecord">
+        <el-input v-model="ruleForm.madicalRecord"></el-input>
+      </el-form-item>
+      <el-form-item label="身份证号" prop="idNumber">
+        <el-input v-model="ruleForm.idNumber"></el-input>
+      </el-form-item>
+      <el-form-item label="电话号码" prop="phoneNumber">
+        <el-input v-model="ruleForm.phoneNumber"></el-input>
+      </el-form-item>
+      <el-form-item label="性别" prop="sex">
+        <el-input v-model="ruleForm.sex"></el-input>
+      </el-form-item>
+      <el-form-item label="出生日期" prop="brithDate">
+        <el-input v-model="ruleForm.brithDate"></el-input>
+      </el-form-item>
+      <el-form-item label="年龄" prop="age">
+        <el-input v-model="ruleForm.age"></el-input>
+      </el-form-item>
+      <el-form-item label="民族" prop="nation">
+        <el-input v-model="ruleForm.nation"></el-input>
+      </el-form-item>
+      <el-form-item label="婚姻状态" prop="martalStatus">
+        <el-input v-model="ruleForm.martalStatus"></el-input>
+      </el-form-item>
+      <el-form-item label="职业状态" prop="vocationStatus">
+        <el-input v-model="ruleForm.vocationStatus"></el-input>
+      </el-form-item>
+      <el-form-item label="月收入" prop="monthIncome">
+        <el-input v-model="ruleForm.monthIncome"></el-input>
+      </el-form-item>
+      <el-form-item label="文化程度" prop="educationDegree">
+        <el-input v-model="ruleForm.educationDegree"></el-input>
+      </el-form-item>
+      <el-form-item label="家庭住址" prop="familyAddress">
+        <el-input v-model="ruleForm.familyAddress"></el-input>
+      </el-form-item>
+      <el-form-item label="治疗阶段" prop="treatmentPhase">
+        <el-input v-model="ruleForm.treatmentPhase"></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSave">
+          确认
+        </el-button>
+      </div>
+    </template>
   </el-dialog>
-  
+
+
 </template>
 
-
-
 <script setup lang="ts">
-import { computed, reactive, ref, watchEffect } from "vue"
-import dataTable1 from '../../../utils/dataTable1.js'
-import { useRouter } from "vue-router";
+import { ElMessage } from 'element-plus'
+import { computed, onMounted, reactive, ref, watchEffect } from 'vue'
+// import dataTable1 from '../../../utils/dataTable1.js'
+import { getDeleteByIdAPI } from '@/api/user.js'
+import {getCountAPI} from '@/api/user.js'
+import { getAddPatientAPI } from '@/api/user.js'
+import { getDeleteAPI } from '@/api/user.js'
+import {getUpdateAPI} from '@/api/user.js'
+import {getPatientConditionAPI} from '@/api/user.js'
+import { getPatientPageAPI } from '@/api/user.js'
+// import {getPatientsExportAPI} from '@/api/user.js'
+import {getPatientExportAllAPI} from '@/api/user.js'
 
+interface PatientForm {
+  userName: string;
+  name: string;
+  madicalRecord: string;
+  idNumber: string;
+  phoneNumber: string;
+  sex: string;
+  brithDate: string;
+  age: number | null;
+  nation: string;
+  martalStatus: string;
+  vocationStatus: string;
+  monthIncome: string;
+  educationDegree: string;
+  familyAddress: string;
+  treatmentPhase: string;
+}
 
-const router = useRouter()
-const form = reactive({
+//查询  
+interface SearchForm{
+  id?:number|null;
+  name?:string|null;
+  madicalRecord?:string|null;
+  sex?:string|null
+  treatmentPhase?:string|null
+}
+
+interface viewForm{
+  name:string,
+  id:null,
+  idNumber:string,
+  phoneNumber:string,
+  sex:string,
+  brithDate:string,
+  nation:string,
+  vocationStatus:string,
+  monthIncome:string,
+  educationDegree:string,
+  familyAddress:string,
+  age:null,
+  martalStatus:string,
+  treatmentPhase:string
+}
+
+const ruleForm: PatientForm = reactive({
+  userName: '',
   name: '',
-  num: '',
-  gender: '',
-  phase: ''
+  madicalRecord: '',
+  idNumber: '',
+  phoneNumber: '',
+  sex: '',
+  brithDate: '',
+  age: null,
+  nation: '',
+  martalStatus: '',
+  vocationStatus: '',
+  monthIncome: '',
+  educationDegree: '',
+  familyAddress: '',
+  treatmentPhase: ''
 })
+
+const total=ref(0)
+const getCount=async ()=>{
+  const res=await getCountAPI()
+  console.log(res)
+}
+const handleSizeChange=(val:any)=>{
+  page.pageSize=val
+  getPatientPage()
+}
+const handlePageChange=(val:any)=>{
+  page.currentPage=val
+  getPatientPage()
+}
+//渲染列表
+const page = reactive({
+  currentPage: 1,
+  pageSize: 5
+})
+const getPatientPage = async () => {
+  const res = await getPatientPageAPI(page.currentPage, page.pageSize)
+  dataTable.list = res.data
+  console.log(res)
+}
+onMounted(() => {
+  getPatientPage()
+  getCount()
+})
+//新增患者  请求成功，添加失败
 const dataTable = reactive({
-  list: dataTable1,
-  pageSize: 9,
+  list: [],
+  pageSize: 10,
   currentPage: 1
 })
 
-//分页
-const paginateData = computed(() => {
-  const start = (dataTable.currentPage - 1) * dataTable.pageSize
-  const end = start + dataTable.pageSize
-  return dataTable.list.slice(start, end)
-})
-const total = computed(() => {
-  return dataTable.list.length
-})
-const handlePageChange = (page) => {
-  dataTable.currentPage = page
+const dialogVisible = ref(false)
+const getAddPatient = () => {
+  dialogVisible.value = true
 }
-//查询
-const searchPatients = () => {
-  dataTable.list = dataTable.list.filter(patient => {
-    return (
-      (!form.name || patient.name.includes(form.name)) && (!form.num
-        || patient.num.includes(form.num)) && (!form.gender || patient.
-          gender.toLowerCase() === form.gender.toLowerCase()) && (!form.phase
-            || patient.phase.includes(form.phase))
-    )
-  })
-  dataTable.currentPage = 1
+
+//新增保存
+const handleSave = async () => {
+  dialogVisible.value = false
+  const res:any = await getAddPatientAPI(ruleForm)
+  console.log("resres",res);
+
+  if (res && res.code === 200) {
+    ElMessage.success('添加成功！')
+    getPatientPage()
+  }
+  else {
+    ElMessage.error(`${res.msg}`)
+  }
+
 }
-watchEffect(() => {
-  paginateData.value
-})
-//新增
-const newPatientForm = reactive({
+const viewPatientForm = ref<viewForm>({
   name: '',
-  num: '',
+  id: null,
   idNumber: '',
-  phone: '',
-  gender: '',
-  birthDate: '',
-  nationality: '',
-  occupation: '',
-  monthlyIncome: '',
-  education: '',
-  address: '',
-  age:'',
-  marriage:''
-  
+  phoneNumber: '',
+  sex: '',
+  brithDate: '',
+  nation: '',
+  vocationStatus: '',
+  monthIncome: '',
+  educationDegree: '',
+  familyAddress: '',
+  age: null,
+  martalStatus: '',
+  treatmentPhase:''
 })
-//控制新增对话框
-const addDialogVisible = ref(false)
-//新增患者
-const addNewPatient = () => {
-  console.log(111)
-  const newPatient = {
-    ...newPatientForm,
-    birthDate: newPatientForm.birthDate.toString()
-  };
-  dataTable.list.push(newPatient)
-  addDialogVisible.value = false
-  resetNewPatientForm()
+
+//查看信息（修改）
+const lookInfo = async (row:any)=>{
+  viewDialogVisible.value = true;
+  viewPatientForm.value = row;
 }
-//重置新增患者表单
-const resetNewPatientForm = () => {
-  for (const key in newPatientForm) {
-    newPatientForm[key] = ''
+
+//修改
+const handleUpdate = async  ()=>{
+  const res:any= await getUpdateAPI(viewPatientForm.value)
+  if(res.code ===200){
+    ElMessage.success('修改成功');
+   await getPatientPage()
+   viewDialogVisible.value = false;
   }
 }
-watchEffect(() => {
-  paginateData.value
-})
-//删除
-const deletePatient=(patientId)=>{
-  dataTable.list=dataTable.list.filter(patient=>
-    patient.id!==patientId
-  )
-}
-//批量删除
-const selectedPatients=ref([])
-const handleBatchDelete=()=>{
-  const selectedPatientsId=selectedPatients.value.reduce((acc,selected,index)=>{
-    if(selected){
-      acc.push(dataTable.list[index].id)
-    }
-    return acc
-  },[])
-  
-  dataTable.list=dataTable.list.filter(patient=>!selectedPatientsId.includes(patient.id))
-  initializeSelecteddPatients()
-}
-const initializeSelecteddPatients=()=>{
-  selectedPatients.value=new Array(dataTable.list.length).fill(false)
-}
-watchEffect(()=>{
-  initializeSelecteddPatients()
-})
-//查看信息
-const viewDialogVisible=ref(false)
-const viewPatientForm=reactive({
-  name: '',
-  num: '',
-  idNumber: '',
-  phone: '',
-  gender: '',
-  birthDate: '',
-  nationality: '',
-  occupation: '',
-  monthlyIncome: '',
-  education: '',
-  address: '',
-  age:'',
-  marriage:''
-})
-const handleView=(patient)=>{
-  // console.log(patient)
-  for(const key in viewPatientForm){
-    if(patient[key]){
-      viewPatientForm[key]=patient[key]
-    }
-  }
-  viewDialogVisible.value=true
-}
-const resetViewForm=()=>{
-  for(const key in viewPatientForm){
-    viewPatientForm[key]=''
-  }
-}
-//保存修改
-const saveEdit=()=>{
-  if(viewPatientForm.id)
-  {
-    console.log(111)
-    const patientIndex=dataTable.list.findIndex(patient=>patient.id===viewPatientForm.id)
-    if(patientIndex!==-1){
-    dataTable.list[patientIndex]={
-      ...dataTable.list[patientIndex],...viewPatientForm
-    }
-    viewDialogVisible.value=false
-    resetViewForm()
-  }
- 
-  
-  }
-}
+
 //治疗情况
-const treatmentDialogVisible=ref(false)
-const selectedPatient=reactive({
-  name: '',
+function test (row:any){
+  console.log("row",row);
+  treatmentDialogVisible.value = true;
+}
+  
+//单条删除 
+const getDeleteById = async (id:number) => {
+  try {
+    const res = await getDeleteByIdAPI(id);
+    console.log(res)
+    if (res.code === 200) {
+      ElMessage({
+        message: '删除成功',
+        type: 'success',
+        plain: true,
+      });
+      dataTable.list.splice(id,1)
+      getPatientPage();
+    } else {
+      ElMessage({
+        message: '删除失败',
+        type: 'error',
+        plain: true,
+      });
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    ElMessage({
+      message: '删除过程中发生错误',
+      type: 'error',
+      plain: true,
+    });
+  }
+};
+
+// //批量删除 
+const selectedPatient = ref([])
+const handleSelectionChange = (val:any) => {
+  selectedPatient.value = val
+}
+const getDelete = async () => {
+  if (selectedPatient.value.length === 0) {
+    ElMessage({
+      message: '请选择要删除的患者',
+      type: 'warning',
+      plain: true
+    })
+    return
+  }
+  try {
+    const ids = selectedPatient.value.map(patient => patient.id).join(',')
+    const res:any = await getDeleteAPI(ids)
+    console.log(res)
+    if (res.code === 200) {
+      ElMessage({
+        message: '删除成功',
+        type: 'success',
+        plain: true
+      })
+      getPatientPage()
+    } else {
+      ElMessage({
+        message: '删除失败',
+        type: 'error',
+        plain: true
+      })
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    ElMessage({
+      message: '删除过程中发生错误',
+      type: 'error',
+      plain: true,
+    });
+  }
+}
+
+const form=reactive<SearchForm>({
+  id:null,
+  name:'',
+  madicalRecord:'',
+  sex:'',
+  treatmentPhase: ''
 })
+
+//查询列表
+const searchPatients=async()=>{
+  const res:any=await getPatientConditionAPI({})
+  console.log('res',res)
+  
+  if(res.code===200){
+    ElMessage.success('查询成功')
+    dataTable.list=res.data
+  }
+  else{
+    ElMessage.error('查询失败')
+  }
+}
+
+const viewDialogVisible = ref(false)
+
+
+// const userInfo = ref({})
+
+
+
+
+// const handleView=(patient)=>{
+//   // console.log(patient)
+//   for(const key in viewPatientForm){
+//     if(patient[key]){
+//       viewPatientForm[key]=patient[key]
+//     }
+//   }
+//   viewDialogVisible.value=true
+// }
+
+// const resetViewForm=()=>{
+//   for(const key in viewPatientForm){
+//     viewPatientForm[key]=''
+//   }
+// }
+
+
+
+//治疗情况
+ const treatmentDialogVisible=ref(false)
 const selectedTreatmentSession=reactive({
   count:'',
   data:'',
@@ -451,35 +577,35 @@ const selectedTreatmentSession=reactive({
   satisfaction:'',
   advice:''
 })
-const handleTreatmentInfo=(patient,treatmentSession)=>{
-  selectedPatient.name=patient.name
-  selectedTreatmentSession.count=treatmentSession.count
-  selectedTreatmentSession.data=treatmentSession.data
-  selectedTreatmentSession.duration=treatmentSession.duration
-  selectedTreatmentSession.satisfaction=treatmentSession.satisfaction
-  selectedTreatmentSession.advice=treatmentSession.advice
-  treatmentDialogVisible.value=true
-}
-const closeTreatmentDialog=()=>{
-  treatmentDialogVisible.value=false
-}
-const del = (row) => {
-  console.log(row); // 检查 row 对象的结构和内容
-  // 确保 row 对象具有 patient 和 treatmentSession 属性
-  if (row && row.patient && row.treatmentSession) {
-    handleTreatmentInfo(row.patient, row.treatmentSession);
-  } else {
-    console.error('Row object is missing expected properties');
-  }
-};
-//导出信息
+// const handleTreatmentInfo=(patient:any,treatmentSession:any)=>{
+//   // selectedPatient.value.name  =patient.name;
+//   selectedTreatmentSession.count=treatmentSession.count
+//   selectedTreatmentSession.data=treatmentSession.data
+//   selectedTreatmentSession.duration=treatmentSession.duration
+//   selectedTreatmentSession.satisfaction=treatmentSession.satisfaction
+//   selectedTreatmentSession.advice=treatmentSession.advice
+//   treatmentDialogVisible.value=true
+// }
+// const closeTreatmentDialog=()=>{
+//   treatmentDialogVisible.value=false
+// }
+// const del = (row:any) => {
+//   console.log(row); // 检查 row 对象的结构和内容
+//   // 确保 row 对象具有 patient 和 treatmentSession 属性
+//   if (row && row.patient && row.treatmentSession) {
+//     handleTreatmentInfo(row.patient, row.treatmentSession);
+//   } else {
+//     console.error('Row object is missing expected properties');
+//   }
+// };
+// //导出信息
 const exportInfoVisible=ref(false)
 const showExportInfo=()=>{
   const content=
-  `姓名:${selectedPatient.name}
-  病例号:${selectedPatient.num}
+  `姓名:${selectedPatient.value.name}
+  病例号:${selectedPatient.value.id}
   导出时间:${new Date().toLocaleDateString()}
-  治疗阶段:${selectedTreatmentSession.phase}
+  治疗阶段:${selectedTreatmentSession.treatmentPhase}
   评价结果:
   您好！您前的评价结果如下：
   轻度焦虑；
@@ -497,9 +623,7 @@ const exportInfo=(content)=>{
   exportContent.value=content
 }
 
-
-
-//下发治疗
+// //下发治疗
 const treatmentOptions=ref([
   '广泛焦虑自评表GAD-7',
   '阿森斯失眠自评量表AIS',
@@ -527,23 +651,22 @@ const resetAssignTreatment = () => {
   assignedTreatments.value = [];
 };
 
-
 // 打开下发治疗选择弹窗
-const openAssignTreatmentDialog = (patient) => {
+const openAssignTreatmentDialog = (patient:any) => {
   // 假设 selectedPatient.value 是当前选中的患者
-  
+
   resetAssignTreatment();
   selectedPatient.value=patient
   assignTreatmentDialogVisible.value = true;
 };
-// const confirmAssignTreatment = () => {
-//   assignedTreatments.value = selectedTreatments.value.slice()
-//   treatmentPlanDialogVisible.value = true;
-//   assignTreatmentDialogVisible.value = false;
- 
-// };
+const confirmAssignTreatment = () => {
+  assignedTreatments.value = selectedTreatments.value.slice()
+  treatmentPlanDialogVisible.value = true;
+  assignTreatmentDialogVisible.value = false;
 
-const handleTreatmentChange=(event,treatment)=>{
+};
+
+const handleTreatmentChange=(event:any,treatment:any)=>{
   if (event) {
     // 如果选中，则添加到assignedTreatments中
     assignedTreatments.value.push(treatment);
@@ -555,29 +678,27 @@ const handleTreatmentChange=(event,treatment)=>{
     }
   }
 }
-// 确认下发治疗，显示治疗计划对话框
-const confirmAssignTreatment = () => {
-  // 可以在这里添加其他逻辑，比如发送数据到服务器等
-  treatmentPlanDialogVisible.value = true;
-};
+// // 确认下发治疗，显示治疗计划对话框
+// const confirmAssignTreatment = () => {
+//   // 可以在这里添加其他逻辑，比如发送数据到服务器等
+//   treatmentPlanDialogVisible.value = true;
+// };
 const closeTreatmentPlanDialog = () => {
   treatmentPlanDialogVisible.value = false;
 };
 //结束治疗
 const treatmentPhaseText=computed(()=>{
   return dataTable.list.map(patient=>{
-    const phaseText=patient.phase.isEnded?'已结束'
-    :patient.phase.count>0? `第${patient.phase.treatmentCount}次`:'未开始'
+    const phaseText=patient.treatmentPhase.isEnded?'已结束'
+    :patient.treatmentPhase.count>0? `第${patient.treatmentPhase.treatmentCount}次`:'未开始'
     return {...patient,phaseText}
   })
 })
 
-const handleEndTreatment=(patient)=>{
-  patient.phase.isEnded=true
+const handleEndTreatment=(patient:any)=>{
+  patient.treatmentPhase.isEnded=true
 }
 </script>
-
-
 
 <style lang="scss" scoped>
 .box {
@@ -588,7 +709,7 @@ const handleEndTreatment=(patient)=>{
 
 .forms {
   max-width: 7000px;
-  margin-right: 20px
+  margin-right: 20px;
 }
 
 .menu {
@@ -605,14 +726,14 @@ label {
 .link-space {
   margin-right: 10px;
 }
+
 .send .el-checkbox-group {
   display: flex;
   flex-wrap: wrap; // 弹性盒子包装
   gap: 10px; // 弹性盒子间距
 }
+
 .send .el-checkbox {
   width: calc(50% - 5px); // 弹性盒子宽度，可根据需要调整
 }
-
-
 </style>

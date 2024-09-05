@@ -1,6 +1,6 @@
 import "./assets/main.scss"
 import './main.css'
-
+import 'element-plus/dist/index.css'
 import { createApp } from 'vue'
 import pinia from '@/stores/index'
 import VueMarkdownEditor from '@kangc/v-md-editor'
