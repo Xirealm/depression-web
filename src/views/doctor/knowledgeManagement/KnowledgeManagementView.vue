@@ -21,16 +21,14 @@
   </div>
   <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" destroy-on-close="true">
     <survey :infor="test" @sendanswer="getanswer" v-if="title==='评估'"></survey>
-    <video v-if="title === '视频'" :src="videosrc" controls style="width: 100%; height: 600px;"/>
+    <div v-if="title === '视频'">
+      <video v-if="testname !== '愉快事件表具体表格.png'" style="width: 100%; height: 600px;" controls>
+        <source :src="videosrc" type="video/quicktime" v-if="testname.slice(-3) === 'mov'">
+        <source :src="videosrc" type="video/mp4" v-if="testname.slice(-3) === 'mp4'">
+      </video>
+      <img v-if="testname === '愉快事件表具体表格.png'" :src="videosrc" alt="">
+    </div>
     <v-md-editor v-model="text" v-if="title === '理论学习'" mode="preview"></v-md-editor>
-    <template #footer v-if="title === '评估'">
-      <div class="dialog-footer">
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="commit">
-          提交
-        </el-button>
-      </div>
-    </template>
   </el-dialog>
 </template>
 
@@ -41,7 +39,6 @@ import SvgIcon3 from '../../../components/icons/account.svg'
 import { ref, reactive, onMounted } from 'vue'
 import survey from '../knowledgeManagement/components/survey.vue'
 import { getkonwledgeAPI, getvideoAPI, gettestAPI } from '@/api/knowledge'
-import { ElMessage } from 'element-plus'
 const dialogFormVisible = ref(false)
 const testname = ref('')
 let test = ref<Object[]>([{}])
@@ -168,19 +165,6 @@ const open = (select:string,itemtitle:string,index:number) => {
     }).catch((err: any) => {
       console.log(err)
     })
-  }
-}
-const commit = () =>{
-  ElMessage.warning('11111')
-  if(commitanswer.value.length<num.value){
-    ElMessage({
-      message: '测试未完成！',
-      type: 'warning',
-    })
-  }
-  if (commitanswer.value.length == num.value){
-    dialogFormVisible.value = false
-    console.log(commitanswer.value)
   }
 }
 const cancel = () =>{
