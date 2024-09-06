@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref,onMounted } from 'vue'
 import { getAllAccountAPI } from '@/api/accountManage';
+import AddAccountDialog from './components/AddAccountDialog.vue'
 
 interface User {
   userName: string
@@ -36,13 +37,16 @@ onMounted(() => {
 })
 
 const tableData = ref<User[]>([])
+
+const addAccountVisible = ref(false)
 </script>
 <template>
   <el-card class="mx-4 card">
     <div class="flex justify-end">
     <el-button 
-      type="primary">
-      新增
+      type="primary"
+      @click="addAccountVisible = true">
+      新增账号
     </el-button>
     <el-button 
       type="danger" >
@@ -51,7 +55,7 @@ const tableData = ref<User[]>([])
     </div>
     <el-table 
     :data="filterTableData" 
-    border class="mt-4" height="70vh">
+    border class="mt-4" height="75vh">
     <el-table-column label="用户名" prop="userName" align="center"/>
     <el-table-column label="角色" prop="userType" align="center"/>
     <el-table-column align="center">
@@ -74,6 +78,7 @@ const tableData = ref<User[]>([])
     </el-table-column>
     </el-table>
   </el-card>
+  <AddAccountDialog v-model="addAccountVisible" @added="getAllAccount"/>
 </template>
 
 <style lang="scss" scoped>
