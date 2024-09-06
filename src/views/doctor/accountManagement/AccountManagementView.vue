@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref,onMounted } from 'vue'
-import { getAllAccountAPI } from '@/api/accountManage';
+import { getAllAccountAPI,postdeleteAccountAPI } from '@/api/accountManage';
 import AddAccountDialog from './components/AddAccountDialog.vue'
+import { ElMessage,ElMessageBox } from 'element-plus';
 
 interface User {
   userName: string
@@ -19,7 +20,31 @@ const handleEdit = (index: number, row: User) => {
   console.log(index, row)
 }
 const handleDelete = (index: number, row: User) => {
-  console.log(index, row)
+  ElMessageBox.confirm(
+    '是否确认删除该账号?',
+    '提醒',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(async() => {
+      console.log(row.userName)
+      const result = await postdeleteAccountAPI(row.userName)
+      if (result.code === 0) {
+        ElMessage.success('删除成功')
+        getAllAccount()
+      } else {
+        ElMessage.error('删除失败')
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
 }
 
 const getAllAccount = async ()=>{
@@ -48,10 +73,10 @@ const addAccountVisible = ref(false)
       @click="addAccountVisible = true">
       新增账号
     </el-button>
-    <el-button 
+    <!-- <el-button 
       type="danger" >
       批量删除
-    </el-button>
+    </el-button> -->
     </div>
     <el-table 
     :data="filterTableData" 
@@ -67,11 +92,11 @@ const addAccountVisible = ref(false)
           重置密码
         </el-button>
         <template v-if="scope.row.userType !=='超级管理员'">
-          <el-button size="small" type="warning" @click="handleEdit(scope.$index, scope.row)">
-          修改
-          </el-button>
+          <!-- <el-button size="small" type="warning" @click="handleEdit(scope.$index, scope.row)">
+            修改
+          </el-button> -->
           <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            删除
+            删除账号
           </el-button>
         </template>
       </template>

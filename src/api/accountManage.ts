@@ -16,3 +16,11 @@ export const postaddAccountAPI = (userName:string,userType:string,password:strin
       password
     })
 }
+/**
+ * 删除账号
+ */
+export const postdeleteAccountAPI = (userName:string): any => {
+    return http.post('/newUser/delete', {
+      userName
+    })
+}
