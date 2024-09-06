@@ -30,7 +30,7 @@ const addAccount = async () => {
             <el-form-item label="角色">
                 <el-select v-model="account.userType" placeholder="请选择角色">
                     <el-option label="医生" value="医生"/>
-                    <el-option label="超级管理员" value="超级管理员"/>
+                    <!-- <el-option label="超级管理员" value="超级管理员"/> -->
                 </el-select>
             </el-form-item>
             <el-form-item label="密码">
