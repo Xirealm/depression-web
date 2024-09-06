@@ -11,5 +11,6 @@ import { RouterView } from 'vue-router';
 <style lang="scss" scoped>
 .main{
   height: 90vh;
+  padding-top: 20px;
 }
 </style>

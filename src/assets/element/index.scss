@@ -3,8 +3,14 @@
         'primary': (
             'base': #49998f,
         ),
+        'info':(
+            'base': #259df2
+        )
     ),
 );
+.el-card{
+    --el-card-border-radius:20px !important;
+}
 // .el-input__wrapper {
 //     box-shadow: none;
 // }
