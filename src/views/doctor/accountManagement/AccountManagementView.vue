@@ -99,14 +99,14 @@ const editUsername = (username:string) => {
           <el-input v-model="search" placeholder="搜索用户" />
         </template>
         <template #default="scope">
-          <el-button type="info" @click="resetPassword(scope.row.userName)">
+          <el-button type="info" plain @click="resetPassword(scope.row.userName)">
             重置密码
           </el-button>
           <template v-if="scope.row.userType !=='超级管理员'">
-            <el-button type="warning" @click="editUsername(scope.row.userName)">
+            <el-button type="warning" plain @click="editUsername(scope.row.userName)">
               修改用户名
             </el-button>
-            <el-button type="danger" @click="handleDelete(scope.$index, scope.row)">
+            <el-button type="danger" plain @click="handleDelete(scope.$index, scope.row)">
               删除账号
             </el-button>
           </template>
