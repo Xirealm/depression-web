@@ -1,6 +1,6 @@
 <template>
-    <el-header class="header">
-        <h1>欢迎您~</h1>
+    <el-header class="header flex items-center">
+        <h1 class="font-bold text-3xl tracking-wider">欢迎您~</h1>
     </el-header>
 </template>
 <style lang="scss" scoped>

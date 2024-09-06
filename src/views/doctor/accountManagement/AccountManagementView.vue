@@ -3,6 +3,7 @@ import { computed, ref,onMounted } from 'vue'
 import { getAllAccountAPI,postdeleteAccountAPI } from '@/api/accountManage';
 import AddAccountDialog from './components/AddAccountDialog.vue'
 import ResetPasswordDialog from './components/ResetPasswordDialog.vue';
+import EditUsernameDialog from './components/EditUsernameDialog.vue';
 import { ElMessage,ElMessageBox } from 'element-plus';
 
 interface User {
@@ -16,10 +17,6 @@ const filterTableData = computed(() =>
     (data) => !search.value || data.userName.toLowerCase().includes(search.value.toLowerCase())
   )
 )
-
-const handleEdit = (index: number, row: User) => {
-  console.log(index, row)
-}
 
 //删除账号
 const handleDelete = (index: number, row: User) => {
@@ -42,12 +39,6 @@ const handleDelete = (index: number, row: User) => {
         ElMessage.error('删除失败')
       }
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: 'Delete canceled',
-      })
-    })
 }
 
 //获取账号列表
@@ -69,8 +60,15 @@ const tableData = ref<User[]>([])
 
 const addAccountVisible = ref(false)
 const resetPasswordRef = ref()
+//重置密码
 const resetPassword = (username:string) => {
   resetPasswordRef.value.openResetPasswordDialog(username)
+}
+const editUsernameRef = ref()
+//编辑用户名
+const editUsername = (username:string) => {
+  console.log(username)
+  editUsernameRef.value.openEditUsernameDialog(username)
 }
 </script>
 <template>
@@ -87,32 +85,38 @@ const resetPassword = (username:string) => {
     </el-button> -->
     </div>
     <el-table 
-    :data="filterTableData" 
-    border class="mt-4" height="75vh">
-    <el-table-column label="用户名" prop="userName" align="center"/>
-    <el-table-column label="角色" prop="userType" align="center"/>
-    <el-table-column align="center">
-      <template #header>
-        <el-input v-model="search" size="small" placeholder="搜索" />
-      </template>
-      <template #default="scope">
-        <el-button size="small" type="info" @click="resetPassword(scope.row.userName)">
-          重置密码
-        </el-button>
-        <template v-if="scope.row.userType !=='超级管理员'">
-          <!-- <el-button size="small" type="warning" @click="handleEdit(scope.$index, scope.row)">
-            修改
-          </el-button> -->
-          <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            删除账号
-          </el-button>
+      :data="filterTableData" 
+      border class="mt-4" height="75vh" size="large">
+      <el-table-column label="用户名" prop="userName" align="center" />
+      <el-table-column label="角色" prop="userType" align="center">
+        <template #default="scope">
+          <el-tag v-if="scope.row.userType === '医生'">{{ scope.row.userType }}</el-tag>
+          <el-tag v-else type="warning">{{ scope.row.userType }}</el-tag>
         </template>
-      </template>
-    </el-table-column>
+      </el-table-column>
+      <el-table-column align="center">
+        <template #header>
+          <el-input v-model="search" placeholder="搜索用户" />
+        </template>
+        <template #default="scope">
+          <el-button type="info" @click="resetPassword(scope.row.userName)">
+            重置密码
+          </el-button>
+          <template v-if="scope.row.userType !=='超级管理员'">
+            <el-button type="warning" @click="editUsername(scope.row.userName)">
+              修改用户名
+            </el-button>
+            <el-button type="danger" @click="handleDelete(scope.$index, scope.row)">
+              删除账号
+            </el-button>
+          </template>
+        </template>
+      </el-table-column>
     </el-table>
   </el-card>
   <AddAccountDialog v-model="addAccountVisible" @added="getAllAccount"/>
   <ResetPasswordDialog ref="resetPasswordRef"/>
+  <EditUsernameDialog ref="editUsernameRef"  @edited="getAllAccount"/>
 </template>
 
 <style lang="scss" scoped>
