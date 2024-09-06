@@ -1,5 +1,5 @@
 <template>
-  <div class="mainbody" :style="{boxShadow: `var(${getCssVarName('lighter')})`}">
+  <el-card class="mx-8 px-8 py-4">
     <div style="border-right: 2px solid #f9f9f9;">
       <div class="box" v-for="(item, index) in source" :key="index">
         <div class="title">
@@ -18,17 +18,19 @@
         </div>
       </div>
     </div>
-  </div>
-  <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" destroy-on-close="true">
-    <survey :infor="test" @sendanswer="getanswer" v-if="title==='评估'"></survey>
-    <div v-if="title === '视频'">
-      <video v-if="testname !== '愉快事件表具体表格.png'" style="width: 100%; height: 600px;" controls>
-        <source :src="videosrc" type="video/quicktime" v-if="testname.slice(-3) === 'mov'">
-        <source :src="videosrc" type="video/mp4" v-if="testname.slice(-3) === 'mp4'">
-      </video>
-      <img v-if="testname === '愉快事件表具体表格.png'" :src="videosrc" alt="">
-    </div>
-    <v-md-editor v-model="text" v-if="title === '理论学习'" mode="preview"></v-md-editor>
+  </el-card>
+  <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" :align-center="true" destroy-on-close="true">
+    <el-scrollbar height="80vh">
+      <survey :infor="test" @sendanswer="getanswer" v-if="title==='评估'"></survey>
+      <div v-if="title === '视频'">
+        <video v-if="testname !== '愉快事件表具体表格.png'" class="w-full" controls>
+          <source :src="videosrc" type="video/quicktime" v-if="testname.slice(-3) === 'mov'">
+          <source :src="videosrc" type="video/mp4" v-if="testname.slice(-3) === 'mp4'">
+        </video>
+        <img v-if="testname === '愉快事件表具体表格.png'" :src="videosrc" alt="">
+      </div>
+      <v-md-editor v-model="text" v-if="title === '理论学习'" mode="preview"></v-md-editor>
+    </el-scrollbar>
   </el-dialog>
 </template>
 
@@ -134,9 +136,6 @@ onMounted(() => {
   // })
 })
 
-const getCssVarName = (type: string) => {
-  return `--el-box-shadow${type ? '-' : ''}${type}`
-}
 const open = (select:string,itemtitle:string,index:number) => {
   dialogFormVisible.value = true
   testname.value = select
@@ -173,13 +172,6 @@ const cancel = () =>{
 </script>
 
 <style scoped>
-.mainbody{
-  width: 92%;
-  margin: 30px auto;
-  padding: 60px 50px 80px;
-  border-radius: 15px;
-}
-
 .svg-icon::v-deep path{
    fill:#49998F
 }

@@ -72,7 +72,7 @@ const editUsername = (username:string) => {
 }
 </script>
 <template>
-  <el-card class="mx-4 card">
+  <el-card class="mx-8 card">
     <div class="flex justify-end">
     <el-button 
       type="primary"
