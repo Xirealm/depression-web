@@ -24,3 +24,12 @@ export const postdeleteAccountAPI = (userName:string): any => {
       userName
     })
 }
+/**
+ * 重置密码
+ */
+export const postResetPasswordAPI = (userName:string,password:string): any => {
+    return http.post('/newUser/updatePassword', {
+        userName,
+        password
+    })
+}

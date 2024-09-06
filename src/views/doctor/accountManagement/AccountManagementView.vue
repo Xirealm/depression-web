@@ -2,6 +2,7 @@
 import { computed, ref,onMounted } from 'vue'
 import { getAllAccountAPI,postdeleteAccountAPI } from '@/api/accountManage';
 import AddAccountDialog from './components/AddAccountDialog.vue'
+import ResetPasswordDialog from './components/ResetPasswordDialog.vue';
 import { ElMessage,ElMessageBox } from 'element-plus';
 
 interface User {
@@ -19,6 +20,8 @@ const filterTableData = computed(() =>
 const handleEdit = (index: number, row: User) => {
   console.log(index, row)
 }
+
+//删除账号
 const handleDelete = (index: number, row: User) => {
   ElMessageBox.confirm(
     '是否确认删除该账号?',
@@ -30,7 +33,7 @@ const handleDelete = (index: number, row: User) => {
     }
   )
     .then(async() => {
-      console.log(row.userName)
+      // console.log(row.userName)
       const result = await postdeleteAccountAPI(row.userName)
       if (result.code === 0) {
         ElMessage.success('删除成功')
@@ -47,6 +50,7 @@ const handleDelete = (index: number, row: User) => {
     })
 }
 
+//获取账号列表
 const getAllAccount = async ()=>{
   const result = await getAllAccountAPI()
   //将admin置顶
@@ -64,6 +68,10 @@ onMounted(() => {
 const tableData = ref<User[]>([])
 
 const addAccountVisible = ref(false)
+const resetPasswordRef = ref()
+const resetPassword = (username:string) => {
+  resetPasswordRef.value.openResetPasswordDialog(username)
+}
 </script>
 <template>
   <el-card class="mx-4 card">
@@ -88,7 +96,7 @@ const addAccountVisible = ref(false)
         <el-input v-model="search" size="small" placeholder="搜索" />
       </template>
       <template #default="scope">
-        <el-button size="small" type="info" @click="handleEdit(scope.$index, scope.row)">
+        <el-button size="small" type="info" @click="resetPassword(scope.row.userName)">
           重置密码
         </el-button>
         <template v-if="scope.row.userType !=='超级管理员'">
@@ -104,6 +112,7 @@ const addAccountVisible = ref(false)
     </el-table>
   </el-card>
   <AddAccountDialog v-model="addAccountVisible" @added="getAllAccount"/>
+  <ResetPasswordDialog ref="resetPasswordRef"/>
 </template>
 
 <style lang="scss" scoped>

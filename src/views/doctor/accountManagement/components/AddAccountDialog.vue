@@ -9,16 +9,15 @@ const account = ref({
     password: ''
 })
 const emit = defineEmits(['added'])
-const addAccount = async() => {
-    const result = await postaddAccountAPI(account.value.userName, account.value.userType, account.value.password)
+const addAccount = async () => {
     isShow.value = false
+    const result = await postaddAccountAPI(account.value.userName, account.value.userType, account.value.password)
     if (result.code === 0) {
         ElMessage.success('添加成功')
         emit('added')
     } else {
         ElMessage.error('添加失败')
     }
-    console.log(result);
 }
 </script>
 
