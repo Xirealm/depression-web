@@ -91,9 +91,9 @@ const confirmAssignTreatment = () => {
 </script>
 
 <template>
-    <el-dialog v-model="assignTreatmentDialogVisible" title="下发治疗" class="send">
-        <div style="border-right: 2px solid #f9f9f9;">
-            <div class="box" v-for="(item, index) in source" :key="index">
+    <el-dialog v-model="assignTreatmentDialogVisible" title="下发治疗" class="send" :align-center="true">
+        <el-scrollbar height="80vh">
+            <div class="box mx-4" v-for="(item, index) in source" :key="index">
                 <div class="title">
                     <div v-if="index == 0">
                         <svg-icon1 src="../../../../components/icons/main.svg" width="24" height='23' class="svg-icon" />
@@ -115,7 +115,7 @@ const confirmAssignTreatment = () => {
                     </div>
                 </el-checkbox-group>
             </div>
-        </div>
+        </el-scrollbar>
         <template #footer>
             <div class="dialog-footer">
                 <el-button @click="assignTreatmentDialogVisible = false">取消</el-button>

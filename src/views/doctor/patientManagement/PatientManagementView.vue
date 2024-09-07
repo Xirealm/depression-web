@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <el-card class="mx-8">
     <div class="box">
       <!-- 查询 -->
       <el-form :model="form" label-width="auto" class="forms" :inline="true">
@@ -84,7 +84,7 @@
         @current-change="handlePageChange"
         @size-change="handleSizeChange"/>  
     </div>
-  </div>
+  </el-card>
   
  <el-dialog
     v-model="treatmentDialogVisible"
