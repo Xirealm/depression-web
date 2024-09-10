@@ -1,25 +1,32 @@
 <template>
-    <div style="font-size: 18px; color: #303133;">请根据您最近两周的实际情况，选择对应的选项:</div>
+    <div class="text-lg text-slate-800 w-full text-wrap">{{ $props.testtitle }}</div>
     <div v-for="(item, index) in $props.infor" :key="index" class="form">
         <div class="question">{{ index + 1 }}. {{ item.questionContext }}</div>
-        <el-radio value="完全不会" size="large" v-model="answer[index]" @change="changeanswer">完全不会</el-radio>
-        <el-radio value="好几天" size="large" v-model="answer[index]" @change="changeanswer">好几天</el-radio>
-        <el-radio value="一半以上" size="large" v-model="answer[index]" @change="changeanswer">一半以上</el-radio>
-        <el-radio value="几乎每天" size="large" v-model="answer[index]" @change="changeanswer">几乎每天</el-radio>
+        <el-radio :value="$props.choice[0]" size="large" v-model="answer[index]">{{ $props.choice[0] }}</el-radio>
+        <el-radio :value="$props.choice[1]" size="large" v-model="answer[index]">{{ $props.choice[1] }}</el-radio>
+        <el-radio :value="$props.choice[2]" size="large" v-model="answer[index]">{{ $props.choice[2] }}</el-radio>
+        <el-radio :value="$props.choice[3]" size="large" v-model="answer[index]">{{ $props.choice[3] }}</el-radio>
     </div>
 </template>
 
 
 <script setup lang="ts">
-import { defineProps,reactive} from 'vue';
-const props = defineProps<{
-    infor:object[]
-}>()
-const send = defineEmits(['sendanswer'])
-let answer = reactive<string[]>([])
-const changeanswer = () =>{
-   send('sendanswer',answer)
+import { defineProps,ref} from 'vue';
+type ifo = {
+    id:number,
+    questionOrder:string,
+    questionContext:string
 }
+defineProps<{
+    infor:ifo[],
+    testtitle:string,
+    choice:string[]
+}>()
+// const send = defineEmits(['sendanswer'])
+let answer = ref<string[]>([])
+// const changeanswer = () =>{
+//    send('sendanswer',answer)
+// }
 </script>
 
 <style scoped>

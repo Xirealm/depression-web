@@ -1,6 +1,6 @@
 <template>
   <el-card class="mx-8 px-8 py-4">
-    <div style="border-right: 2px solid #f9f9f9;">
+    <div class="border-r-2 border-slate-100">
       <div class="box" v-for="(item, index) in source" :key="index">
         <div class="title">
           <div v-if="index == 0">
@@ -12,7 +12,7 @@
           <div v-if="index == 2">
             <svg-icon3 src="../../../components/icons/account.svg" width="20" height="20" class="svg-icon" />
           </div>
-          <span style="margin-left: 10px;">{{ item.title }}</span>
+          <span class="ml-2">{{ item.title }}</span>
         </div>
         <div class="select" v-for="(select, i) in item.tests" :key="i" @click="open(select, item.title,i)">{{ select }}
         </div>
@@ -21,7 +21,7 @@
   </el-card>
   <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" :align-center="true" destroy-on-close="true">
     <el-scrollbar height="80vh">
-      <survey :infor="test" @sendanswer="getanswer" v-if="title==='评估'"></survey>
+      <survey :infor="test" :testtitle="testtitle" :choice="choice" @sendanswer="getanswer" v-if="title==='评估'"></survey>
       <div v-if="title === '视频'">
         <video v-if="testname !== '愉快事件表具体表格.png'" class="w-full" controls>
           <source :src="videosrc" type="video/quicktime" v-if="testname.slice(-3) === 'mov'">
@@ -38,12 +38,22 @@
 import SvgIcon1 from '../../../components/icons/main.svg'
 import SvgIcon2 from '../../../components/icons/email.svg'
 import SvgIcon3 from '../../../components/icons/account.svg'
-import { ref, reactive, onMounted } from 'vue'
+import { ref,onMounted} from 'vue'
 import survey from '../knowledgeManagement/components/survey.vue'
 import { getkonwledgeAPI, getvideoAPI, gettestAPI } from '@/api/knowledge'
+import {useStore} from '@/stores/knowledge'
+const usestore = useStore()
+const { source1,answers } = usestore
 const dialogFormVisible = ref(false)
 const testname = ref('')
-let test = ref<Object[]>([{}])
+const choice = ref<string[]>([])
+type ifo = {
+  id: number,
+  questionOrder: string,
+  questionContext: string
+}
+let test = ref<ifo[]>([])
+const testtitle = ref('')
 const commitanswer = ref<string[]>([])
 const getanswer = (answer:string[]) =>{
   commitanswer.value = answer
@@ -52,81 +62,7 @@ const title = ref('')
 const text = ref('')
 const knowledgeindex = ref<number>()
 const videosrc = ref('')
-const num = ref<number>(0)
-type sou = {
-  title:string,
-  tests:string[]
-}
-let source = reactive<sou[]>([
-  {
-    title:'评估',
-    tests:[
-    '抑郁症筛查量表(PHQ-9)',
-    '广泛焦虑自评量表(GAD-7)',
-    '自我分化水平量表',
-    '成年人健康自我管理能力测评量表',
-    '成年人健康自我管理能力测评量表',
-    '成年人健康自我管理能力测评量表'
-    ]
-  },
-  {
-    title: '视频',
-    tests: [
-      '八总结.mov',
-      '第六次.mov',
-      '第六次家庭作业.mov',
-      '第四次家庭作业.mov',
-      '第四次1.mov',
-      '第四次2.mov',
-      '腹式呼吸训练.mp4',
-      '蝴蝶拍.mp4',
-      '渐进式肌肉放松训练.mp4',
-      '七1-矫正负性自动思维验证法.mp4',
-      'D七2-矫正负性自动思维去灾难化重归因.mp4',
-      '三1-行为改变的重要性.mp4',
-      '三2-建立愉快事件表.mp4',
-      '三3-每日活动安排制定表.mp4',
-      '十1-新的核心信念形成.mp4 ',
-      '挑战负性自动思维.mov',
-      '挑战负性自动思维.mp4',
-      '挑战负性自动思维技巧.mov',
-      '挑战负性自动思维技巧.mp4',
-      '五1-介绍认知模型.mp4',
-      '五2-识别自动思维.mp4',
-      '五3-识别负性自动思维.mp4',
-      '一1介绍简化认知行为疗法.mp4 ',
-      '一2-抑郁知识.mp4',
-      '愉快事件表具体表格.png']
-  },
-  {
-    title: '理论学习',
-    tests: [
-      '1.1 认知行为治疗',
-      '1.2 抑郁是可以治疗',
-      '2.1 动机激发',
-      '2.2 成本效益分析',
-      '3.1 行为改变的重要',
-      '4.1 任务分级',
-      '5.1 认知模型',
-      '5.2 自动思维概念',
-      '5.3 负性自动思维',
-      '6.1 负性自动思维归',
-      '6.2 挑战负性自动思',
-      '6.3 挑战负性想法的',
-      '7.1 矫正负性自动思',
-      '8.1 认知演练和应对',
-      '9.1 过去如何影响',
-      '9.2 明确核心信念',
-      '9.3 核心信念的三个',
-      '9.4 发掘核心信念',
-      '10.1 形成新的核心',
-      '10.2 重新理解旧的核心信念',
-      '11.1 处理疑虑和保留意见，享受自己的进步',
-      '11.2 支持系统',
-      '12.1 平衡心态，目标合理',
-      '12.2 预防复发']
-  }
-])
+let source = source1
 
 onMounted(() => {
   // gettestAPI({ questionForm:1}).then((res:any)=>{
@@ -143,7 +79,7 @@ const open = (select:string,itemtitle:string,index:number) => {
     title.value = itemtitle
     knowledgeindex.value = index + 1
     getkonwledgeAPI(String(knowledgeindex.value)).then((res: any) => {
-      text.value = res.data.context
+      text.value = res.article.context
     }).catch((err: any) => {
       console.log(err)
     })
@@ -159,15 +95,22 @@ const open = (select:string,itemtitle:string,index:number) => {
   if(itemtitle === '评估'){
     title.value = itemtitle
     gettestAPI({ questionForm: index + 1 }).then((res: any) => {
-      test.value = res.questionnaires
-      num.value = res.questionnaires.length
+      res['问卷'].newQuestionsVO.forEach((item:ifo)=>{
+        if(item.questionOrder === '0'){
+          testtitle.value = item.questionContext
+        }
+      })
+      let infor = res['问卷'].newQuestionsVO.filter((item:ifo)=> item.questionOrder !== '0')
+      if(index!==2){
+        choice.value = answers[0]
+      }else{
+        choice.value = answers[1]
+      }
+      test.value = infor
     }).catch((err: any) => {
       console.log(err)
     })
   }
-}
-const cancel = () =>{
-  dialogFormVisible.value = false
 }
 </script>
 
@@ -191,8 +134,8 @@ const cancel = () =>{
   background-color: #f7f7f7;
   padding: 0px 30px;
   font-size: 15px;
-  height: 30px;
-  line-height: 30px;
+  height: 35px;
+  line-height: 35px;
   color: #415058;
 }
 
