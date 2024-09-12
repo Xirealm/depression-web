@@ -28,7 +28,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" >查询</el-button>
+              <el-button type="primary" @click="getPatientPage" >查询</el-button>
               <el-button type="primary" @click="getAddPatient">新增</el-button>
               <el-button type="primary" @click="getDelete">批量删除</el-button>
             </el-form-item>
@@ -69,8 +69,8 @@
         </el-table-column>
         <el-table-column label="操作" width="250px" class="caozuo">
           <template #default="scope">
-            <el-link type="primary" class="link-space" @click="openAssignTreatmentDialog()">下发治疗</el-link>
-            <el-link type="primary" class="link-space" >结束治疗</el-link>
+            <el-link type="primary" class="link-space" @click="distributeTreatment(scope.row.madicalRecord,scope.row.questionnaireId,scope.row.articleId,scope.row.videoName)">下发治疗</el-link>
+            <el-link type="primary" class="link-space" @click="endTreatment(scope.row.madicalRecord)">结束治疗</el-link>
             <el-link type="primary" class="link-space" @click="getDeleteById(scope.row.id)">删除</el-link>
           </template>
         </el-table-column>
@@ -121,9 +121,14 @@ import { getDeleteByIdAPI } from '@/api/patientManage.js'
 import {getCountAPI} from '@/api/patientManage.js'
 import { getDeleteAPI } from '@/api/patientManage.js'
 import { getPatientPageAPI } from '@/api/patientManage.js'
+import { getEndPatientAPI } from '@/api/patientManage.js'
+import { getDistributeTreatment } from '@/api/patientManage.js'
+import {getPatientsExportAPI} from '@/api/patientManage.js'
+
 import AddAccountDialog from './components/AddAccountDialog.vue'
 import LookInfoDialog from './components/LookInfoDialog.vue'
 import SendTreatmentDialog from './components/SendTreatmentDialog.vue'
+
 
 
 //查询  
@@ -159,16 +164,31 @@ const handlePageChange=(val:any)=>{
 //渲染列表
 const page = reactive({
   currentPage: 1,
-  pageSize: 5
+  pageSize: 5,
+  name:'',
+  madicalRecord:'',
+  treatmentPhase: '',
+  sex: ''
 })
+// const data = reactive({})
 const getPatientPage = async () => {
-  const res = await getPatientPageAPI(page.currentPage, page.pageSize)
-  dataTable.list = res.data
+  const res = await getPatientPageAPI(page.currentPage, page.pageSize,page.name,page.madicalRecord,page.treatmentPhase,page.sex)
   console.log(res)
+  if(form.name){
+    dataTable.list=res.data.filter((item:any)=>{
+      return item.name==form.name
+    })
+  }else{
+      dataTable.list=res.data
+    }
+  // getPatientPage()
+  // dataTable.list = res.data
+  // console.log(res.data[0].madicalRecord)
 }
 onMounted(() => {
   getPatientPage()
   getCount()
+  PatientsExport(page.madicalRecord,page.treatmentPhase)
 })
 //新增患者
 const dataTable:any = reactive({
@@ -188,6 +208,7 @@ const lookInfo =  (row:any)=>{
   viewDialogVisible.value = true;
   // console.log('chakan')
   LookInfoRef.value.EditInfo(row)
+  // viewDialogVisible.value = false;
 }
 
 //治疗情况
@@ -268,12 +289,27 @@ const getDelete = async () => {
     });
   }
 }
+//导出治疗阶段
+const PatientsExport=async(madicalRecord:any,treatmentPhase:any)=>{
+  const res=await getPatientsExportAPI(madicalRecord,treatmentPhase)
+  console.log(res.data.id)
+  getPatientPage()
+}
 
 // 下发治疗
 const assignTreatmentDialogVisible=ref(false)
-const openAssignTreatmentDialog = () => {
+
+const distributeTreatment=async (madicalRecord:string,questionnaireId:string,articleId:string,videoName:string)=>{
   assignTreatmentDialogVisible.value = true;
-};
+  const res=await getDistributeTreatment(madicalRecord,questionnaireId,articleId,videoName)
+  console.log(res)
+}
+//结束治疗
+const endTreatment=async (madicalRecord:string)=>{
+  const res:any=await getEndPatientAPI(madicalRecord)
+  console.log(res)
+}
+
 
 </script>
 

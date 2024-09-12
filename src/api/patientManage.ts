@@ -1,4 +1,7 @@
 import { http } from '@/utils/http'
+
+
+// import { put } from 'node_modules/axios/index.cjs'
 //单个患者删除
 export const getDeleteByIdAPI=(id:Number):any=>{
     // return http.delete('/patients/deleteById'),{
@@ -42,7 +45,7 @@ export const getDeleteByIdAPI=(id:Number):any=>{
     })
   }
 
-  //分页列表
+  //分页列表  &&  条件查询
   
   // export const getPatientPageAPI=(currentPage:Number,pageSize:Number):any=>{
   //   return http.post(`patients/page?currentPage={currentPage}&pageSize={pageSize}`,{
@@ -50,15 +53,37 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   //       pageSize
   //   })
   // }
-  export const getPatientPageAPI=(currentPage:number,pageSize:number):any=>{
+  export const getPatientPageAPI=(currentPage:number,pageSize:number,name?:string,madicalRecord?:string,treatmentPhase?:string,sex?:String):any=>{
     return http.post('/patients/page?currentPage=1&pageSize=5',{
       currentPage,
       pageSize,
+      name,
+      madicalRecord,
+      treatmentPhase,
+      sex
+    })
+  }
+  
+  //下发治疗
+  export const getDistributeTreatment=(madicalRecord:string,questionnaireId:string,articleId:string,videoName:string):any=>{
+    return http.post('/patients/distributeTreatment',{
+      madicalRecord,
+      questionnaireId,
+      articleId,
+      videoName
+    })
+  }
+  //结束治疗
+  export const getEndPatientAPI=(madicalRecord:string):any=>{
+    return http({
+      url:`/patients/endTreatment?madicalRecord=${madicalRecord}`,
+      method:'put',
+      madicalRecord
     })
   }
   //导出治疗阶段
   export const getPatientsExportAPI=(userId:number,treatmentPhase:number)=>{
-    return http.get(`/patients/export?userId={userId}&treatmentPhase={treatmentPhase}`,{
+    return http.get(`/patients/export?userId=${userId}&treatmentPhase=${treatmentPhase}`,{
       params:{
         userId,
         treatmentPhase
