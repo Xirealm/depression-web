@@ -3,7 +3,7 @@ import { ref } from "vue"
 import {getUpdateAPI} from '@/api/patientManage.js'
 import { ElMessage } from "element-plus";
 
-const viewDialogVisible = ref()
+const viewDialogVisible = ref(false)
 interface viewForm{
   name:string,
   id:null,
@@ -39,10 +39,13 @@ const viewPatientForm = ref<viewForm>({
 
 const emit = defineEmits(['edited'])
 const handleUpdate = async  ()=>{
+  // console.log(111)
+  viewDialogVisible.value = false;
   const res:any= await getUpdateAPI(viewPatientForm.value)
+  console.log(res)
   if(res.code ===200){
     ElMessage.success('修改成功');
-    viewDialogVisible.value = false;
+    // viewDialogVisible.value = false;
     emit('edited')
   //  await getPatientPage()
    

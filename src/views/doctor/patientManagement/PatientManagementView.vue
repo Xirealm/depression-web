@@ -28,7 +28,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" >查询</el-button>
+              <el-button type="primary" @click="getPatientPage" >查询</el-button>
               <el-button type="primary" @click="getAddPatient">新增</el-button>
               <el-button type="primary" @click="getDelete">批量删除</el-button>
             </el-form-item>
@@ -52,12 +52,13 @@
           <template #default="scope" >
             <!-- <div v-if="scope.row.phase?.isEnded">已结束</div> -->
             <span >{{ scope.row.treatmentPhase }}</span>
+            <el-button type="text" size="mini" @click="PatientsExport(scope.row.id,scope.row.treatmentPhase)">导出</el-button>
             <!-- <span v-else>未开始</span> -->
           </template>
         </el-table-column>
         <el-table-column label="治疗详情" prop="detail">
           <template #default="scope">
-            <el-link type="primary" @click="test(scope.row)">治疗情况</el-link>
+            <el-link type="primary" @click="handleGetted(scope.row.madicalRecorda)">治疗情况</el-link>
           </template>
         </el-table-column>
         <el-table-column label="个人信息" prop="assignment">
@@ -69,8 +70,8 @@
         </el-table-column>
         <el-table-column label="操作" width="250px" class="caozuo">
           <template #default="scope">
-            <el-link type="primary" class="link-space" @click="openAssignTreatmentDialog()">下发治疗</el-link>
-            <el-link type="primary" class="link-space" >结束治疗</el-link>
+            <el-link type="primary" class="link-space" @click="distributeTreatment(scope.row.madicalRecord,scope.row.questionnaireId,scope.row.articleId,scope.row.videoName)">下发治疗</el-link>
+            <el-link type="primary" class="link-space" @click="endTreatment(scope.row.madicalRecord)">结束治疗</el-link>
             <el-link type="primary" class="link-space" @click="getDeleteById(scope.row.id)">删除</el-link>
           </template>
         </el-table-column>
@@ -86,32 +87,27 @@
     </div>
   </el-card>
   
- <el-dialog
+ <!-- <el-dialog
     v-model="treatmentDialogVisible"
     title="治疗情况"
     width="40%">
-    <div>
-      <p>患者姓名：</p>
-      <p>治疗次数：</p>
-      <p>治疗完成时间：</p>
-      <p>持续时间:min</p>
-      <p>评估结果：</p>
-      <ul>
-        <li>GAD-7:轻度焦虑</li>
-        <li>AIS:怀疑失眠</li>
-      </ul>
-      <p>PSQI:睡眠质量一般</p>
-      <p>满意指数:</p>
-      <p>FACT-G:生活质量良好</p>
-      <p>建议:</p>
-      <p>RES:</p>
-      <p>SDS:轻度抑郁</p>
+    <div v-for="(item,index) in treatmentData" :key="index">
+      <h3>治疗编号:{{ item.treatment }}</h3>
+      <p>完成时间：{{ item.finishTime }}</p>
+      <div v-for="(result,index) in item.questionnaireRecords" :key="index">
+        <h4>{{ result.questionnaireName }}</h4>
+        <p>结果:{{ result.questionnaireResult }}</p>
+      </div>
+      <p>反馈评分:{{ item.feedback.feedbackScore }}</p>
+      <p>反馈评价:{{ item.feedback.feedbackEvaluate }}</p>
+      <p>完成时间:{{ item.completeTime }}</p>
     </div>
-  </el-dialog>
+  </el-dialog> -->
 
   <AddAccountDialog v-model="dialogVisible" @added="getPatientPage"/>
   <LookInfoDialog v-model="viewDialogVisible" ref="LookInfoRef" @edited="getPatientPage" />
   <SendTreatmentDialog v-model="assignTreatmentDialogVisible" @sended="getPatientPage"/>
+  <TreatmentResultDialog v-model="treatmentDialogVisible" ref="QuestionnaireResultRef"  @getted="handleUpdate " @update="handleUpdate" />
 </template>
 
 <script setup lang="ts">
@@ -121,9 +117,15 @@ import { getDeleteByIdAPI } from '@/api/patientManage.js'
 import {getCountAPI} from '@/api/patientManage.js'
 import { getDeleteAPI } from '@/api/patientManage.js'
 import { getPatientPageAPI } from '@/api/patientManage.js'
+import { getEndPatientAPI } from '@/api/patientManage.js'
+import { getDistributeTreatment } from '@/api/patientManage.js'
+import {getPatientsExportAPI} from '@/api/patientManage.js'
+// import {getQuestionnaireResultAPI} from '@/api/patientManage.js'
 import AddAccountDialog from './components/AddAccountDialog.vue'
 import LookInfoDialog from './components/LookInfoDialog.vue'
 import SendTreatmentDialog from './components/SendTreatmentDialog.vue'
+import TreatmentResultDialog from './components/TreatmentResultDialog.vue'
+
 
 
 //查询  
@@ -159,16 +161,31 @@ const handlePageChange=(val:any)=>{
 //渲染列表
 const page = reactive({
   currentPage: 1,
-  pageSize: 5
+  pageSize: 5,
+  name:'',
+  madicalRecord:'',
+  treatmentPhase: '',
+  sex: ''
 })
+// const data = reactive({})
 const getPatientPage = async () => {
-  const res = await getPatientPageAPI(page.currentPage, page.pageSize)
-  dataTable.list = res.data
+  const res = await getPatientPageAPI(page.currentPage, page.pageSize,page.name,page.madicalRecord,page.treatmentPhase,page.sex)
   console.log(res)
+  if(form.name){
+    dataTable.list=res.data.filter((item:any)=>{
+      return item.name==form.name
+    })
+  }else{
+      dataTable.list=res.data
+    }
+  // getPatientPage()
+  // dataTable.list = res.data
+  // console.log(res.data[0].madicalRecord)
 }
 onMounted(() => {
   getPatientPage()
   getCount()
+  PatientsExport(page.madicalRecord,page.treatmentPhase)
 })
 //新增患者
 const dataTable:any = reactive({
@@ -188,15 +205,49 @@ const lookInfo =  (row:any)=>{
   viewDialogVisible.value = true;
   // console.log('chakan')
   LookInfoRef.value.EditInfo(row)
+  // viewDialogVisible.value = false;
 }
 
 //治疗情况
+// let arr=reactive({
+//   list1:[
+//   results[],
+//   treatment,
+//   ],
+//   feedback
+// })
+// const treatmentData = ref([])
+const QuestionnaireResultRef=ref()
+const newArr=ref([])
 const treatmentDialogVisible=ref(false)
-function test (row:any){
-  console.log("row",row);
+const medicalRecord = ref('')
+const handleGetted = async () => {
+  await QuestionnaireResultRef.value.getQuestionnaireResult(medicalRecord.value)
+  
+  // console.log(madicalRecord)
+  // await QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
+  // treatmentDialogVisible.value=false
+  // QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
+  
+};
+const handleUpdate=(data:any)=>{
+  newArr.value=data
   treatmentDialogVisible.value = true;
 }
+// const handleUpdate=(data:any)=>{
+//   treatmentData.value=data
+// }
+// // function test (row:any){
+// //   console.log("row",row);
+// //   treatmentDialogVisible.value = true;
+// // }
+// const getQuestionnaireResult=async (madicalRecord:string)=>{
+//   treatmentDialogVisible.value = true
+//   const res=await getQuestionnaireResultAPI(madicalRecord)
+//   console.log(res)
+//   arr.list1=res.results
   
+// }
 //单条删除 
 const getDeleteById = async (id:number) => {
   try {
@@ -208,8 +259,8 @@ const getDeleteById = async (id:number) => {
         type: 'success',
         plain: true,
       });
-      dataTable.list.splice(id,1)
-      getPatientPage();
+        dataTable.list.splice(id,1)
+        getPatientPage();
     } else {
       ElMessage({
         message: '删除失败',
@@ -268,12 +319,27 @@ const getDelete = async () => {
     });
   }
 }
+//导出治疗阶段
+const PatientsExport=async(madicalRecord:any,treatmentPhase:any)=>{
+  const res=await getPatientsExportAPI(madicalRecord,treatmentPhase)
+  console.log(res)
+  getPatientPage()
+}
 
 // 下发治疗
 const assignTreatmentDialogVisible=ref(false)
-const openAssignTreatmentDialog = () => {
+
+const distributeTreatment=async (madicalRecord:string,questionnaireId:string,articleId:string,videoName:string)=>{
   assignTreatmentDialogVisible.value = true;
-};
+  const res=await getDistributeTreatment(madicalRecord,questionnaireId,articleId,videoName)
+  console.log(res)
+}
+//结束治疗
+const endTreatment=async (madicalRecord:string)=>{
+  const res:any=await getEndPatientAPI(madicalRecord)
+  console.log(res)
+}
+
 
 </script>
 
