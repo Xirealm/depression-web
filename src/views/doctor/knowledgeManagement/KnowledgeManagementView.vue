@@ -21,7 +21,8 @@
   </el-card>
   <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" :align-center="true" destroy-on-close="true">
     <el-scrollbar height="80vh">
-      <survey :infor="test" :testtitle="testtitle" :choice="choice" @sendanswer="getanswer" v-if="title==='评估'"></survey>
+      <survey :questionFormid="questionFormid" :infor="test" :testtitle="testtitle" :choice="choice" @sendanswer="getanswer"
+        v-if="title==='评估'"></survey>
       <div v-if="title === '视频'">
         <video v-if="testname !== '愉快事件表具体表格.png'" class="w-full" controls>
           <source :src="videosrc" type="video/quicktime" v-if="testname.slice(-3) === 'mov'">
@@ -46,7 +47,7 @@ const usestore = useStore()
 const { source1,answers } = usestore
 const dialogFormVisible = ref(false)
 const testname = ref('')
-const choice = ref<string[]>([])
+const choice = ref<string[] | string[][]>([])
 type ifo = {
   id: number,
   questionOrder: string,
@@ -54,6 +55,7 @@ type ifo = {
 }
 let test = ref<ifo[]>([])
 const testtitle = ref('')
+const questionFormid = ref<number>(0)
 const commitanswer = ref<string[]>([])
 const getanswer = (answer:string[]) =>{
   commitanswer.value = answer
@@ -101,12 +103,17 @@ const open = (select:string,itemtitle:string,index:number) => {
         }
       })
       let infor = res['问卷'].newQuestionsVO.filter((item:ifo)=> item.questionOrder !== '0')
-      if(index!==2){
-        choice.value = answers[0]
-      }else{
+      if (res['问卷'].questionForm === 3){
         choice.value = answers[1]
       }
-      test.value = infor
+      else if (res['问卷'].questionForm === 4){
+        choice.value = answers[2]
+      }
+      else{
+        choice.value = answers[0]
+      }
+      test.value = infor 
+      questionFormid.value = res['问卷'].questionForm
     }).catch((err: any) => {
       console.log(err)
     })
