@@ -82,19 +82,24 @@ export const getDeleteByIdAPI=(id:Number):any=>{
     })
   }
   //导出治疗阶段
-  export const getPatientsExportAPI=(userId:number,treatmentPhase:number)=>{
-    return http.get(`/patients/export?userId=${userId}&treatmentPhase=${treatmentPhase}`,{
-      params:{
-        userId,
-        treatmentPhase
-      }
+  export const getPatientsExportAPI=(id:number,treatmentPhase:number)=>{
+    return http.get(`/patients/export?userId=${id}&treatmentPhase=${treatmentPhase}`,{
+      
     })
   }
-  //导出治疗阶段全部
-  export const getPatientExportAllAPI=(userId:number)=>{
-    return http.get(`/patients/exportAll?userId={}`,{
+  // //导出治疗阶段全部
+  // export const getPatientExportAllAPI=(userId:number)=>{
+  //   return http.get(`/patients/exportAll?userId={}`,{
+  //     params:{
+  //       userId
+  //     }
+  //   })
+  // }
+  //治疗情况（获取问卷结果）
+  export const getQuestionnaireResultAPI=(madicalRecord:string)=>{
+    return http.get(`/newQuestionnaire/getQuestionnaireResult?madicalRecord=${madicalRecord}`,{
       params:{
-        userId
+        madicalRecord
       }
     })
   }
