@@ -1,10 +1,5 @@
 <script setup lang="ts">
-<<<<<<< HEAD
 import { ref,defineEmits} from "vue"
-=======
-import { ref } from "vue"
-import { ElMessage } from "element-plus"
->>>>>>> 24d00d0a1975709550c7ef3030f1c022af72b591
 import SvgIcon1 from '../../../../components/icons/main.svg'
 import SvgIcon2 from '../../../../components/icons/email.svg'
 import SvgIcon3 from '../../../../components/icons/account.svg'
@@ -88,15 +83,9 @@ defineExpose({
         </template>
     </el-dialog>
 </template>
-<<<<<<< HEAD
 <style scoped>
 .svg-icon:deep(.path) {
   fill: #49998F;
-=======
-<style scoped lang="scss">
-.svg-icon::v-deep path {
-    fill: #49998F;
->>>>>>> 24d00d0a1975709550c7ef3030f1c022af72b591
 }
 
 .title {

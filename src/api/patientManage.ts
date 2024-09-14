@@ -81,25 +81,14 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   }
   //结束治疗
   export const getEndPatientAPI=(madicalRecord:string):any=>{
-<<<<<<< HEAD
-    // return http({
-    //   url:`/patients/endTreatment?madicalRecord=${madicalRecord}`,
-    //   method:'put',
-    //   madicalRecord
-    // })
-    return http.put(`/patients/endTreatment?madicalRecord=${madicalRecord}`,{
-      madicalRecord
-=======
     return http({
       url:`/patients/endTreatment?madicalRecord=${madicalRecord}`,
       method:'put'
->>>>>>> 24d00d0a1975709550c7ef3030f1c022af72b591
     })
   }
   //导出治疗阶段
   export const getPatientsExportAPI=(id:number,treatmentPhase:number)=>{
     return http.get(`/patients/export?userId=${id}&treatmentPhase=${treatmentPhase}`,{
-      
     })
   }
   // //导出治疗阶段全部
