@@ -21,14 +21,20 @@
   </el-card>
   <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" :align-center="true" destroy-on-close="true">
     <el-scrollbar height="80vh">
-      <survey :questionFormid="questionFormid" :infor="test" :testtitle="testtitle" :choice="choice" @sendanswer="getanswer"
-        v-if="title==='评估'"></survey>
-      <div v-if="title === '视频'">
+      <survey 
+        v-if="title==='评估'"
+        :questionFormid="questionFormid" 
+        :infor="test" 
+        :testtitle="testtitle" 
+        :choice="choice" 
+        @sendanswer="getanswer"
+      />
+      <div v-if="title === '视频'" class="h-[80vh] flex items-center">
         <video v-if="testname !== '愉快事件表具体表格.png'" class="w-full" controls>
           <source :src="videosrc" type="video/quicktime" v-if="testname.slice(-3) === 'mov'">
           <source :src="videosrc" type="video/mp4" v-if="testname.slice(-3) === 'mp4'">
         </video>
-        <img v-if="testname === '愉快事件表具体表格.png'" :src="videosrc" alt="">
+        <img v-if="testname === '愉快事件表具体表格.png'" :src="videosrc">
       </div>
       <v-md-editor v-model="text" v-if="title === '理论学习'" mode="preview"></v-md-editor>
     </el-scrollbar>
