@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref , watch } from "vue"
+import { ref } from "vue"
+import { ElMessage } from "element-plus"
 import SvgIcon1 from '../../../../components/icons/main.svg'
 import SvgIcon2 from '../../../../components/icons/email.svg'
 import SvgIcon3 from '../../../../components/icons/account.svg'
@@ -24,7 +25,12 @@ const confirmAssignTreatment = async () => {
         selectedTreatments.value.videos.toString()
     )
     isShow.value = false
-    // emit('sended')
+    if (res.code === 200) {
+        ElMessage.success('下发治疗成功')
+        emit('sended')
+    } else {
+        ElMessage.error('下发治疗失败')
+    }
 };
 
 const open = (madicalRecord: string) => {
