@@ -61,7 +61,7 @@ defineExpose({
 </script>
 
 <template>
-      <el-dialog v-model="viewDialogVisible" title="患者信息" @close="viewDialogVisible = false" :align-center="true">
+      <el-dialog v-model="viewDialogVisible" title="患者信息" @close="viewDialogVisible =false" :align-center="true">
     <el-form :model="viewPatientForm" label-width="120px">
       <el-form-item label="姓名">
         <el-input v-model="viewPatientForm.name"></el-input>

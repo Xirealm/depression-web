@@ -75,9 +75,12 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   }
   //结束治疗
   export const getEndPatientAPI=(madicalRecord:string):any=>{
-    return http({
-      url:`/patients/endTreatment?madicalRecord=${madicalRecord}`,
-      method:'put',
+    // return http({
+    //   url:`/patients/endTreatment?madicalRecord=${madicalRecord}`,
+    //   method:'put',
+    //   madicalRecord
+    // })
+    return http.put(`/patients/endTreatment?madicalRecord=${madicalRecord}`,{
       madicalRecord
     })
   }

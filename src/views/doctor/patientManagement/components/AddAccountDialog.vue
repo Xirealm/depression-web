@@ -57,8 +57,8 @@ const handleSave = async () => {
 
 <template>
     <!-- 新增患者 -->
-  <el-dialog v-model="dialogVisible" title="新增患者" width="500" :align-center="true">
-    <el-form :model="ruleForm">
+  <el-dialog v-model="dialogVisible" title="新增患者"  :align-center="true">
+    <el-form :model="ruleForm" label-width="120px">
       <el-form-item label="姓名" prop="name">
         <el-input v-model="ruleForm.name"></el-input>
       </el-form-item>

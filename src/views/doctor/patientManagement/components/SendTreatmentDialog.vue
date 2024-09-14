@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref} from "vue"
+import { ref,defineEmits} from "vue"
 import SvgIcon1 from '../../../../components/icons/main.svg'
 import SvgIcon2 from '../../../../components/icons/email.svg'
 import SvgIcon3 from '../../../../components/icons/account.svg'
@@ -54,8 +54,8 @@ const confirmAssignTreatment = () => {
     </el-dialog>
 </template>
 <style scoped>
-.svg-icon::v-deep path {
-    fill: #49998F;
+.svg-icon:deep(.path) {
+  fill: #49998F;
 }
 
 .title {

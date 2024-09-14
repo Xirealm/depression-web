@@ -6,29 +6,32 @@
         <el-row :gutter="20">
           <el-col :span="5">
             <el-form-item label="患者姓名">
-              <el-input v-model="form.name" style="width: 200px" />
+              <el-input v-model="form.name" style="width: 250px" />
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item label="病例号">
-              <el-input v-model="form.madicalRecord" style="width: 200px" />
+              <el-input v-model="form.madicalRecord" style="width: 250px" />
             </el-form-item>
           </el-col>
           <el-col :span="4" style="text-align: right">
             <el-form-item label="性别">
-              <el-input v-model="form.sex" style="width: 200px" />
+              <el-input v-model="form.sex" style="width: 250px" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="治疗阶段" style="width: 300px">
-              <el-select v-model="form.treatmentPhase" placeholder="未开始">
+            <el-form-item label="治疗阶段" style="width: 450px;display:flex; align-items: center;margin-left: 90px;">
+              <el-select v-model="form.treatmentPhase" placeholder="未开始" style="flex: 1;width: 250px;">
                 <el-option v-for="n in 5" :label="`第${n}次`" :value="`time${n}`" :key="n" />
               </el-select>
+              <el-button type="primary" @click="getPatientPage" style="margin-left: 100px;">查询</el-button>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" @click="getPatientPage" >查询</el-button>
+          
+        </el-row>
+        <el-row type="flex" justify="end">
+          <el-col :span="4">
+            <el-form-item :span="18" style="margin-right: 100px;">
               <el-button type="primary" @click="getAddPatient">新增</el-button>
               <el-button type="primary" @click="getDelete">批量删除</el-button>
             </el-form-item>
