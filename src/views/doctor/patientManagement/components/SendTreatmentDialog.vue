@@ -4,6 +4,7 @@ import SvgIcon1 from '../../../../components/icons/main.svg'
 import SvgIcon2 from '../../../../components/icons/email.svg'
 import SvgIcon3 from '../../../../components/icons/account.svg'
 import { postDistributeTreatmentAPI } from "@/api/patientManage"
+import { ElMessage } from 'element-plus'
 import { useStore } from '@/stores/knowledge'
 const usestore = useStore()
 const { source1 } = usestore
