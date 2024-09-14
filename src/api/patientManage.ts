@@ -54,7 +54,7 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   //   })
   // }
   export const getPatientPageAPI=(currentPage:number,pageSize:number,name?:string,madicalRecord?:string,treatmentPhase?:string,sex?:String):any=>{
-    return http.post('/patients/page?currentPage=1&pageSize=5',{
+    return http.post(`/patients/page?currentPage=${currentPage}&pageSize=${pageSize}`, {
       currentPage,
       pageSize,
       name,

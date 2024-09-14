@@ -38,7 +38,7 @@
     </div>
     <div>
       <!-- 表格 -->
-      <el-table :data="dataTable.list" @selection-change="handleSelectionChange">
+      <el-table :data="dataTable.list" height="70vh" size="large" @selection-change="handleSelectionChange">
         <el-table-column type=selection width="55"></el-table-column>
         <el-table-column type="index" label="序号" width="100px"></el-table-column>
         <el-table-column label="姓名" prop="name"></el-table-column>
@@ -110,7 +110,7 @@
   <AddAccountDialog v-model="dialogVisible" @added="getPatientPage"/>
   <LookInfoDialog v-model="viewDialogVisible" ref="LookInfoRef" @edited="getPatientPage" />
   <SendTreatmentDialog ref="SendTreatmentDialogRef" @sended="getPatientPage"/>
-  <TreatmentResultDialog v-model="treatmentDialogVisible" ref="QuestionnaireResultRef"  @getted="handleUpdate " @update="handleUpdate" />
+  <TreatmentResultDialog v-model="treatmentDialogVisible" ref="QuestionnaireResultRef" @getted="handleUpdate " @update="handleUpdate" />
 </template>
 
 <script setup lang="ts">
