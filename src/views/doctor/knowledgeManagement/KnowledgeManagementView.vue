@@ -1,6 +1,7 @@
 <template>
-  <el-card class="mx-8 px-8 py-4">
-    <div class="border-r-2 border-slate-100">
+  <el-card class="mx-8 py-4">
+    <el-scrollbar height="78vh">
+    <div class="border-r-2 border-slate-100 mx-8">
       <div class="box" v-for="(item, index) in source" :key="index">
         <div class="title">
           <div v-if="index == 0">
@@ -18,6 +19,7 @@
         </div>
       </div>
     </div>
+    </el-scrollbar>
   </el-card>
   <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" :align-center="true" destroy-on-close="true">
     <el-scrollbar height="80vh">
