@@ -52,13 +52,12 @@
           <template #default="scope" >
             <!-- <div v-if="scope.row.phase?.isEnded">已结束</div> -->
             <span >{{ scope.row.treatmentPhase }}</span>
-            <el-button type="text" size="mini" @click="PatientsExport(scope.row.id,scope.row.treatmentPhase)">导出</el-button>
-            <!-- <span v-else>未开始</span> -->
+            <!-- <el-button type="text" size="small" @click="PatientsExport(scope.row.id,scope.row.treatmentPhase)">导出</el-button> -->
           </template>
         </el-table-column>
         <el-table-column label="治疗详情" prop="detail">
           <template #default="scope">
-            <el-link type="primary" @click="handleGetted(scope.row.madicalRecorda)">治疗情况</el-link>
+            <el-link type="primary" @click="handleGetted(scope.row.madicalRecord)">治疗情况</el-link>
           </template>
         </el-table-column>
         <el-table-column label="个人信息" prop="assignment">
