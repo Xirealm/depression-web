@@ -41,7 +41,7 @@
     </div>
     <div>
       <!-- 表格 -->
-      <el-table :data="dataTable.list" @selection-change="handleSelectionChange">
+      <el-table :data="dataTable.list" height="70vh" size="large" @selection-change="handleSelectionChange">
         <el-table-column type=selection width="55"></el-table-column>
         <el-table-column type="index" label="序号" width="100px"></el-table-column>
         <el-table-column label="姓名" prop="name"></el-table-column>
@@ -55,13 +55,12 @@
           <template #default="scope" >
             <!-- <div v-if="scope.row.phase?.isEnded">已结束</div> -->
             <span >{{ scope.row.treatmentPhase }}</span>
-            <el-button type="text" size="mini" @click="PatientsExport(scope.row.id,scope.row.treatmentPhase)">导出</el-button>
-            <!-- <span v-else>未开始</span> -->
+            <!-- <el-button type="text" size="small" @click="PatientsExport(scope.row.id,scope.row.treatmentPhase)">导出</el-button> -->
           </template>
         </el-table-column>
         <el-table-column label="治疗详情" prop="detail">
           <template #default="scope">
-            <el-link type="primary" @click="handleGetted(scope.row.madicalRecorda)">治疗情况</el-link>
+            <el-link type="primary" @click="handleGetted(scope.row.madicalRecord)">治疗情况</el-link>
           </template>
         </el-table-column>
         <el-table-column label="个人信息" prop="assignment">
@@ -73,7 +72,11 @@
         </el-table-column>
         <el-table-column label="操作" width="250px" class="caozuo">
           <template #default="scope">
-            <el-link type="primary" class="link-space" @click="distributeTreatment(scope.row.madicalRecord,scope.row.questionnaireId,scope.row.articleId,scope.row.videoName)">下发治疗</el-link>
+            <el-link 
+              type="primary" class="link-space" 
+              @click="distributeTreatment(scope.row.madicalRecord,scope.row.questionnaireId,scope.row.articleId,scope.row.videoName)">
+                下发治疗
+              </el-link>
             <el-link type="primary" class="link-space" @click="endTreatment(scope.row.madicalRecord)">结束治疗</el-link>
             <el-link type="primary" class="link-space" @click="getDeleteById(scope.row.id)">删除</el-link>
           </template>
@@ -109,8 +112,8 @@
 
   <AddAccountDialog v-model="dialogVisible" @added="getPatientPage"/>
   <LookInfoDialog v-model="viewDialogVisible" ref="LookInfoRef" @edited="getPatientPage" />
-  <SendTreatmentDialog v-model="assignTreatmentDialogVisible" @sended="getPatientPage"/>
-  <TreatmentResultDialog v-model="treatmentDialogVisible" ref="QuestionnaireResultRef"  @getted="handleUpdate " @update="handleUpdate" />
+  <SendTreatmentDialog ref="SendTreatmentDialogRef" @sended="getPatientPage"/>
+  <TreatmentResultDialog v-model="treatmentDialogVisible" ref="QuestionnaireResultRef" @getted="handleUpdate " @update="handleUpdate" />
 </template>
 
 <script setup lang="ts">
@@ -121,15 +124,12 @@ import {getCountAPI} from '@/api/patientManage.js'
 import { getDeleteAPI } from '@/api/patientManage.js'
 import { getPatientPageAPI } from '@/api/patientManage.js'
 import { getEndPatientAPI } from '@/api/patientManage.js'
-import { getDistributeTreatment } from '@/api/patientManage.js'
 import {getPatientsExportAPI} from '@/api/patientManage.js'
 // import {getQuestionnaireResultAPI} from '@/api/patientManage.js'
 import AddAccountDialog from './components/AddAccountDialog.vue'
 import LookInfoDialog from './components/LookInfoDialog.vue'
 import SendTreatmentDialog from './components/SendTreatmentDialog.vue'
 import TreatmentResultDialog from './components/TreatmentResultDialog.vue'
-
-
 
 //查询  
 interface SearchForm{
@@ -164,7 +164,7 @@ const handlePageChange=(val:any)=>{
 //渲染列表
 const page = reactive({
   currentPage: 1,
-  pageSize: 5,
+  pageSize: 10,
   name:'',
   madicalRecord:'',
   treatmentPhase: '',
@@ -331,11 +331,10 @@ const PatientsExport=async(madicalRecord:any,treatmentPhase:any)=>{
 
 // 下发治疗
 const assignTreatmentDialogVisible=ref(false)
-
+const SendTreatmentDialogRef = ref()
 const distributeTreatment=async (madicalRecord:string,questionnaireId:string,articleId:string,videoName:string)=>{
-  assignTreatmentDialogVisible.value = true;
-  const res=await getDistributeTreatment(madicalRecord,questionnaireId,articleId,videoName)
-  console.log(res)
+  // assignTreatmentDialogVisible.value = true;
+  SendTreatmentDialogRef.value.open(madicalRecord)
 }
 //结束治疗
 const endTreatment=async (madicalRecord:string)=>{

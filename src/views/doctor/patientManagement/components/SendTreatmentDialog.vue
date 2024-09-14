@@ -1,26 +1,54 @@
 <script setup lang="ts">
+<<<<<<< HEAD
 import { ref,defineEmits} from "vue"
+=======
+import { ref } from "vue"
+import { ElMessage } from "element-plus"
+>>>>>>> 24d00d0a1975709550c7ef3030f1c022af72b591
 import SvgIcon1 from '../../../../components/icons/main.svg'
 import SvgIcon2 from '../../../../components/icons/email.svg'
 import SvgIcon3 from '../../../../components/icons/account.svg'
-import {useStore} from '@/stores/knowledge'
+import { postDistributeTreatmentAPI } from "@/api/patientManage"
+import { useStore } from '@/stores/knowledge'
 const usestore = useStore()
 const { source1 } = usestore
 
-
-const assignTreatmentDialogVisible = ref(false)
-const selectedTreatments = ref([]);
-
+const isShow = ref()
+const medicalRecord = ref()
+const selectedTreatments = ref({
+    questionnaires: [],
+    videos: [],
+    theories:[]
+})
 const emit = defineEmits(['sended'])
-const confirmAssignTreatment = () => {
-  assignTreatmentDialogVisible.value = false;
-  emit('sended')
+const confirmAssignTreatment = async () => {
+    const res = await postDistributeTreatmentAPI(
+        medicalRecord.value,
+        selectedTreatments.value.questionnaires.toString(),
+        selectedTreatments.value.theories.toString(),
+        selectedTreatments.value.videos.toString()
+    )
+    isShow.value = false
+    if (res.code === 200) {
+        ElMessage.success('下发治疗成功')
+        emit('sended')
+    } else {
+        ElMessage.error('下发治疗失败')
+    }
 };
 
+const open = (madicalRecord: string) => {
+    isShow.value = true
+    medicalRecord.value = madicalRecord
+}
+
+defineExpose({
+    open
+})
 </script>
 
 <template>
-    <el-dialog v-model="assignTreatmentDialogVisible" title="下发治疗" class="send" :align-center="true">
+    <el-dialog v-model="isShow" title="下发治疗" class="send" :align-center="true">
         <el-scrollbar height="80vh">
             <div class="box mx-4" v-for="(item, index) in source1" :key="index">
                 <div class="title">
@@ -36,26 +64,39 @@ const confirmAssignTreatment = () => {
                     </div>
                     <span style="margin-left: 10px;">{{ item.title }}</span>
                 </div>
-                <el-checkbox-group v-model="selectedTreatments">
+                <el-checkbox-group v-if="index === 0" v-model="selectedTreatments.questionnaires">
                     <div class="select" v-for="(select, i) in item.tests" :key="i">
-                        <el-checkbox>
-                            {{ select }}
-                        </el-checkbox>
+                        <el-checkbox :label="select" :value="i + 1"/>
+                    </div>
+                </el-checkbox-group>
+                <el-checkbox-group v-else-if="index === 1" v-model="selectedTreatments.videos">
+                    <div class="select" v-for="(select, i) in item.tests" :key="i">
+                        <el-checkbox :label="select" :value="select"/>
+                    </div>
+                </el-checkbox-group>
+                <el-checkbox-group v-else v-model="selectedTreatments.theories">
+                    <div class="select" v-for="(select, i) in item.tests" :key="i">
+                        <el-checkbox :label="select" :value="i + 1"/>
                     </div>
                 </el-checkbox-group>
             </div>
         </el-scrollbar>
         <template #footer>
             <div class="dialog-footer">
-                <el-button @click="assignTreatmentDialogVisible = false">取消</el-button>
-                <el-button @click="confirmAssignTreatment">确定</el-button>
+                <el-button @click="confirmAssignTreatment" type="primary">下发治疗</el-button>
             </div>
         </template>
     </el-dialog>
 </template>
+<<<<<<< HEAD
 <style scoped>
 .svg-icon:deep(.path) {
   fill: #49998F;
+=======
+<style scoped lang="scss">
+.svg-icon::v-deep path {
+    fill: #49998F;
+>>>>>>> 24d00d0a1975709550c7ef3030f1c022af72b591
 }
 
 .title {

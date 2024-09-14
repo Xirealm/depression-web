@@ -54,7 +54,7 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   //   })
   // }
   export const getPatientPageAPI=(currentPage:number,pageSize:number,name?:string,madicalRecord?:string,treatmentPhase?:string,sex?:String):any=>{
-    return http.post('/patients/page?currentPage=1&pageSize=5',{
+    return http.post(`/patients/page?currentPage=${currentPage}&pageSize=${pageSize}`, {
       currentPage,
       pageSize,
       name,
@@ -64,8 +64,14 @@ export const getDeleteByIdAPI=(id:Number):any=>{
     })
   }
   
-  //下发治疗
-  export const getDistributeTreatment=(madicalRecord:string,questionnaireId:string,articleId:string,videoName:string):any=>{
+  /**
+   * 下发治疗
+   * @param madicalRecord 病历号
+   * @param questionnaireId 问卷id序列
+   * @param articleId 理论id序列
+   * @param videoName 视频名称序列
+   */
+  export const postDistributeTreatmentAPI=(madicalRecord:string,questionnaireId:string,articleId:string,videoName:string):any=>{
     return http.post('/patients/distributeTreatment',{
       madicalRecord,
       questionnaireId,
@@ -75,6 +81,7 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   }
   //结束治疗
   export const getEndPatientAPI=(madicalRecord:string):any=>{
+<<<<<<< HEAD
     // return http({
     //   url:`/patients/endTreatment?madicalRecord=${madicalRecord}`,
     //   method:'put',
@@ -82,6 +89,11 @@ export const getDeleteByIdAPI=(id:Number):any=>{
     // })
     return http.put(`/patients/endTreatment?madicalRecord=${madicalRecord}`,{
       madicalRecord
+=======
+    return http({
+      url:`/patients/endTreatment?madicalRecord=${madicalRecord}`,
+      method:'put'
+>>>>>>> 24d00d0a1975709550c7ef3030f1c022af72b591
     })
   }
   //导出治疗阶段
