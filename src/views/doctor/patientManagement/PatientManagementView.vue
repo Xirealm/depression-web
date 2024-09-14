@@ -70,7 +70,11 @@
         </el-table-column>
         <el-table-column label="操作" width="250px" class="caozuo">
           <template #default="scope">
-            <el-link type="primary" class="link-space" @click="distributeTreatment(scope.row.madicalRecord,scope.row.questionnaireId,scope.row.articleId,scope.row.videoName)">下发治疗</el-link>
+            <el-link 
+              type="primary" class="link-space" 
+              @click="distributeTreatment(scope.row.madicalRecord,scope.row.questionnaireId,scope.row.articleId,scope.row.videoName)">
+                下发治疗
+              </el-link>
             <el-link type="primary" class="link-space" @click="endTreatment(scope.row.madicalRecord)">结束治疗</el-link>
             <el-link type="primary" class="link-space" @click="getDeleteById(scope.row.id)">删除</el-link>
           </template>
@@ -106,7 +110,7 @@
 
   <AddAccountDialog v-model="dialogVisible" @added="getPatientPage"/>
   <LookInfoDialog v-model="viewDialogVisible" ref="LookInfoRef" @edited="getPatientPage" />
-  <SendTreatmentDialog v-model="assignTreatmentDialogVisible" @sended="getPatientPage"/>
+  <SendTreatmentDialog ref="SendTreatmentDialogRef" @sended="getPatientPage"/>
   <TreatmentResultDialog v-model="treatmentDialogVisible" ref="QuestionnaireResultRef"  @getted="handleUpdate " @update="handleUpdate" />
 </template>
 
@@ -118,15 +122,12 @@ import {getCountAPI} from '@/api/patientManage.js'
 import { getDeleteAPI } from '@/api/patientManage.js'
 import { getPatientPageAPI } from '@/api/patientManage.js'
 import { getEndPatientAPI } from '@/api/patientManage.js'
-import { getDistributeTreatment } from '@/api/patientManage.js'
 import {getPatientsExportAPI} from '@/api/patientManage.js'
 // import {getQuestionnaireResultAPI} from '@/api/patientManage.js'
 import AddAccountDialog from './components/AddAccountDialog.vue'
 import LookInfoDialog from './components/LookInfoDialog.vue'
 import SendTreatmentDialog from './components/SendTreatmentDialog.vue'
 import TreatmentResultDialog from './components/TreatmentResultDialog.vue'
-
-
 
 //查询  
 interface SearchForm{
@@ -328,11 +329,10 @@ const PatientsExport=async(madicalRecord:any,treatmentPhase:any)=>{
 
 // 下发治疗
 const assignTreatmentDialogVisible=ref(false)
-
+const SendTreatmentDialogRef = ref()
 const distributeTreatment=async (madicalRecord:string,questionnaireId:string,articleId:string,videoName:string)=>{
-  assignTreatmentDialogVisible.value = true;
-  const res=await getDistributeTreatment(madicalRecord,questionnaireId,articleId,videoName)
-  console.log(res)
+  // assignTreatmentDialogVisible.value = true;
+  SendTreatmentDialogRef.value.open(madicalRecord)
 }
 //结束治疗
 const endTreatment=async (madicalRecord:string)=>{

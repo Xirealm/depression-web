@@ -64,8 +64,14 @@ export const getDeleteByIdAPI=(id:Number):any=>{
     })
   }
   
-  //下发治疗
-  export const getDistributeTreatment=(madicalRecord:string,questionnaireId:string,articleId:string,videoName:string):any=>{
+  /**
+   * 下发治疗
+   * @param madicalRecord 病历号
+   * @param questionnaireId 问卷id序列
+   * @param articleId 理论id序列
+   * @param videoName 视频名称序列
+   */
+  export const postDistributeTreatmentAPI=(madicalRecord:string,questionnaireId:string,articleId:string,videoName:string):any=>{
     return http.post('/patients/distributeTreatment',{
       madicalRecord,
       questionnaireId,
@@ -77,8 +83,7 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   export const getEndPatientAPI=(madicalRecord:string):any=>{
     return http({
       url:`/patients/endTreatment?madicalRecord=${madicalRecord}`,
-      method:'put',
-      madicalRecord
+      method:'put'
     })
   }
   //导出治疗阶段
