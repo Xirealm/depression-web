@@ -87,7 +87,7 @@
             </div>
         </div>
     </div>
-    <el-button class="my-7 ml-3" color="#49998F" size="default" @click="submit">提交</el-button>
+    <el-button class="mt-7 ml-3" color="#49998F" size="default" @click="submit">提交</el-button>
 </template>
 
 

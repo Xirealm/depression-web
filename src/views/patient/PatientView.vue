@@ -8,11 +8,11 @@
           :madicalRecord="madicalRecord" />
       </div>
       <div v-if="page > allmes[0].length && page <= (allmes[1].length + allmes[0].length)"
-        class="h-[80vh] flex items-center">
-        <video v-if="allmes[1][num].filename.slice(-3) === 'mp4'" class="w-full" controls>
+        class="h-[70vh] flex items-center justify-center">
+        <video v-if="allmes[1][num].filename.slice(-3) === 'mp4'" class="h-full" controls>
           <source :src="allmes[1][num].url" type="video/mp4">
         </video>
-        <video v-if="allmes[1][num].filename.slice(-3) === 'mov'" class="w-full" controls>
+        <video v-if="allmes[1][num].filename.slice(-3) === 'mov'" class="h-full" controls>
           <source :src="allmes[1][num].url" type="video/quicktime">
         </video>
         <img v-if="allmes[1][num].filename === '愉快事件表具体表格.png'" :src="allmes[1][num].url">
