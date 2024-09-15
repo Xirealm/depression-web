@@ -26,54 +26,72 @@
             </el-form-item>
             <el-button type="primary" @click="getPatientPage">查询</el-button>
         </div>
-        <div class="flex justify-end">
-          <el-button type="primary" @click="getAddPatient">新增患者</el-button>
-          <el-button type="danger" @click="getDelete">批量删除</el-button>
+        <div class="flex justify-end mt-4">
+          <el-button type="primary" @click="getAddPatient" round>新增患者</el-button>
+          <el-button type="danger" @click="getDelete" round>批量删除</el-button>
         </div>
       </el-form>
     </div>
-    <div class="mt-2">
-      <el-table :data="dataTable.list" height="65vh" size="large" border @selection-change="handleSelectionChange">
-        <el-table-column type=selection width="55"></el-table-column>
-        <el-table-column type="index" label="序号" width="100px"></el-table-column>
-        <el-table-column label="姓名" prop="name"></el-table-column>
-        <el-table-column label="病历号" prop="madicalRecord"></el-table-column>
-        <el-table-column label="性别" prop="sex"></el-table-column>
-        <el-table-column label="年龄" prop="age"></el-table-column>
-        <el-table-column label="民族" prop="nation"></el-table-column>
-        <el-table-column label="婚姻状况" prop="martalStatus"></el-table-column>
-        <el-table-column label="职业状况" prop="vocationStatus"></el-table-column>
-        <el-table-column label="治疗阶段" prop="treatmentPhase">
+    <div class="mt-4">
+      <el-table :data="dataTable.list" height="60vh" size="large" border @selection-change="handleSelectionChange">
+        <el-table-column type=selection width="55" align="center"/>
+        <el-table-column type="index" label="序号" width="70px" align="center"/>
+        <el-table-column label="姓名" prop="name" align="center"/>
+        <el-table-column label="病历号" prop="madicalRecord" align="center"/>
+        <el-table-column label="性别" prop="sex" align="center"/>
+        <el-table-column label="年龄" prop="age" align="center"/>
+        <el-table-column label="民族" prop="nation" align="center"/>
+        <el-table-column label="婚姻状况" prop="martalStatus" align="center"/>
+        <el-table-column label="职业状况" prop="vocationStatus" align="center" />
+        <el-table-column label="治疗阶段" prop="treatmentPhase" align="center">
           <template #default="scope">
             <!-- <div v-if="scope.row.phase?.isEnded">已结束</div> -->
-            <span>{{ scope.row.treatmentPhase }}</span>
+            <el-tag v-if="scope.row.treatmentPhase == '已结束'" type="danger">{{ scope.row.treatmentPhase }}</el-tag>
+            <el-tag v-else-if="scope.row.treatmentPhase == '未开始'" type="warning">{{ scope.row.treatmentPhase }}</el-tag>
+            <el-tag v-else>{{ scope.row.treatmentPhase }}</el-tag>
             <!-- <el-button type="text" size="small" @click="PatientsExport(scope.row.id,scope.row.treatmentPhase)">导出</el-button> -->
           </template>
         </el-table-column>
-        <el-table-column label="治疗详情" prop="detail">
+        <el-table-column label="治疗详情" prop="detail" align="center">
           <template #default="scope">
             <el-link type="primary" @click="handleGetted(scope.row.madicalRecord)">治疗情况</el-link>
           </template>
         </el-table-column>
-        <el-table-column label="个人信息" prop="assignment">
+        <el-table-column label="个人信息" prop="assignment" align="center">
           <template #default="scope">
             <el-link type="primary" class="link-space" @click="lookInfo(scope.row)">查看信息
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="250px" class="caozuo">
+        <el-table-column label="操作" width="250px" align="center">
           <template #default="scope">
-            <el-link type="primary" class="link-space"
+            <el-button 
+              type="primary" size="small" plain
               @click="distributeTreatment(scope.row.madicalRecord, scope.row.questionnaireId, scope.row.articleId, scope.row.videoName)">
               下发治疗
-            </el-link>
-            <el-link type="primary" class="link-space" @click="endTreatment(scope.row.madicalRecord)">结束治疗</el-link>
-            <el-link type="primary" class="link-space" @click="getDeleteById(scope.row.id)">删除</el-link>
+            </el-button>
+            <el-button 
+              type="warning" size="small" plain
+              @click="endTreatment(scope.row.madicalRecord)">
+              结束治疗
+            </el-button>
+            <el-button 
+              type="danger" size="small" plain
+              @click="getDeleteById(scope.row.id)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination background :page-size="page.pageSize" :current-page="page.currentPage" layout="prev, pager, next"
-        :total="total" @current-change="handlePageChange" @size-change="handleSizeChange" />
+      <el-pagination 
+        class="mt-6 justify-end"
+        background 
+        :page-size="page.pageSize" 
+        :current-page="page.currentPage" 
+        layout="total,prev, pager, next"
+        :total="total" 
+        @current-change="handlePageChange" 
+      />
     </div>
   </el-card>
 
@@ -136,10 +154,10 @@ const TreatmentPhases = ['未开始','已结束', '第一次','第二次','第�
 
 //分页
 const total = ref(0)
-const getCount = async () => {
-  const res = await getCountAPI()
-  console.log(res)
-}
+// const getCount = async () => {
+//   const res = await getCountAPI()
+//   console.log(res)
+// }
 const handleSizeChange = (val: any) => {
   page.pageSize = val
   getPatientPage()
@@ -165,6 +183,7 @@ const getPatientPage = async () => {
   console.log(res)
   if(res.code === 200){
     dataTable.list = res.data
+    total.value = res.total
   } else {
     ElMessage.error(`${res.msg}`)
     dataTable.list = []
@@ -177,7 +196,7 @@ const getPatientPage = async () => {
 }
 onMounted(() => {
   getPatientPage()
-  getCount()
+  // getCount()
   // PatientsExport(page.id,page.treatmentPhase)
 })
 //新增患者
@@ -196,9 +215,7 @@ const LookInfoRef = ref()
 const viewDialogVisible = ref(false)
 const lookInfo = (row: any) => {
   viewDialogVisible.value = true;
-  // console.log('chakan')
-  LookInfoRef.value.EditInfo(row)
-  // viewDialogVisible.value = false;
+  LookInfoRef.value.setEditInfo(row)
 }
 
 //治疗情况
@@ -348,7 +365,4 @@ label {
   width: 90px;
 }
 
-.link-space {
-  margin-right: 10px;
-}
 </style>

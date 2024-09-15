@@ -21,7 +21,6 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   }
   //新增患者
   export const getAddPatientAPI=(data:object)=>{
-    // return http.post('/patients/save')
     return http({
       url:'/patients/save',
       method:'post',
@@ -29,15 +28,13 @@ export const getDeleteByIdAPI=(id:Number):any=>{
     })
   }
   
-
   //批量患者删除
   export const getDeleteAPI=(ids:string)=>{
     console.log(ids)
     return http.delete(`/patients/delete?ids=${ids}`)
   }
   //修改患者信息
-  export const getUpdateAPI=(data:object
-  )=>{
+  export const putUpdateAPI=(data:object)=>{
     return http({
       url:'/patients/update',
       method:'put',

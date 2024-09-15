@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import {getUpdateAPI} from '@/api/patientManage.js'
+import { putUpdateAPI } from '@/api/patientManage.js'
 import { ElMessage } from "element-plus";
 
-const viewDialogVisible = ref(false)
-interface viewForm{
+const viewDialogVisible = defineModel()
+
+interface viewForm {
   name:string,
   id:null,
   idNumber:string,
@@ -39,29 +40,25 @@ const viewPatientForm = ref<viewForm>({
 
 const emit = defineEmits(['edited'])
 const handleUpdate = async  ()=>{
-  // console.log(111)
   viewDialogVisible.value = false;
-  const res:any= await getUpdateAPI(viewPatientForm.value)
+  const res:any= await putUpdateAPI(viewPatientForm.value)
   console.log(res)
   if(res.code ===200){
     ElMessage.success('修改成功');
-    // viewDialogVisible.value = false;
     emit('edited')
-  //  await getPatientPage()
-   
   }
 }
-//修改
-const EditInfo=(row:any)=>{
-  viewPatientForm.value=row
+//传入修改信息
+const setEditInfo=(row:any)=>{
+  viewPatientForm.value = row
 }
 defineExpose({
-  EditInfo
+  setEditInfo
 })
 </script>
 
 <template>
-      <el-dialog v-model="viewDialogVisible" title="患者信息" @close="viewDialogVisible =false" :align-center="true">
+  <el-dialog v-model="viewDialogVisible" title="患者信息" @close="viewDialogVisible =false" :align-center="true">
     <el-form :model="viewPatientForm" label-width="120px">
       <el-form-item label="姓名">
         <el-input v-model="viewPatientForm.name"></el-input>
@@ -81,24 +78,8 @@ defineExpose({
           <el-option label="女" value="女"></el-option>
         </el-select>
       </el-form-item>
-
-<!-- 
-      
-  <el-config-provider :locale="zhCn">
-    <app />
-  </el-config-provider>
-</template>
-
-<script setup lang="ts">
-import { ElConfigProvider } from 'element-plus'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
-</script> -->
-
-
-
       <el-form-item label="出生日期">
-        <el-date-picker v-model="viewPatientForm.brithDate" type="date" placeholder="选择日期">
-        </el-date-picker>
+        <el-date-picker v-model="viewPatientForm.brithDate" value-format="YYYY-MM-DD" type="date" placeholder="选择日期" />
       </el-form-item>
       <el-form-item label="民族">
         <el-input v-model="viewPatientForm.nation"></el-input>
@@ -122,16 +103,15 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
         <el-input v-model="viewPatientForm.educationDegree"></el-input>
       </el-form-item>
       <el-form-item label="家庭住址">
-        <el-input type="textarea" v-model="viewPatientForm.familyAddress"></el-input>
+        <el-input v-model="viewPatientForm.familyAddress"></el-input>
       </el-form-item>
-      <el-form-item label="年龄">
+      <!-- <el-form-item label="年龄">
         <el-input v-model="viewPatientForm.age"></el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button @click="viewDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleUpdate">保存</el-button>
+        <el-button type="primary" @click="handleUpdate">保存修改</el-button>
       </span>
     </template>
   </el-dialog>

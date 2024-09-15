@@ -47,7 +47,6 @@
   </el-dialog>
 </template>
 
-
 <script setup lang="ts">
 import Header from './components/Header.vue';
 import survey from '@/views/doctor/knowledgeManagement/components/survey.vue'
@@ -100,7 +99,7 @@ const route = useRoute()
 const madicalRecord = ref<string>('123456') 
 //评分
 const value = ref(0)
-const input =  ref('')
+const input = ref('')
 onMounted(()=>{
   console.log(route)
   getTreatmentPlan(madicalRecord.value).then((res: plan) => {

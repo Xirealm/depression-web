@@ -24,8 +24,8 @@ const logout = () => {
                 <span class="menu-item">账号管理</span>
             </RouterLink>
         </div>
-        <el-button round type="warning" @click="logout">
-            退出登录
+        <el-button round type="warning" @click="logout" size="large">
+            <span class="font-bold tracking-wide">退出登录</span>
         </el-button>
     </el-header>
 </template>

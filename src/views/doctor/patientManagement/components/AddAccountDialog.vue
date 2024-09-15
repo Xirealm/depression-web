@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from "vue"
+import { reactive,ref } from "vue"
 import { getAddPatientAPI } from "@/api/patientManage";
 import { ElMessage } from "element-plus";
 
@@ -12,7 +12,7 @@ interface PatientForm {
   phoneNumber: string;
   sex: string;
   brithDate: string;
-  age: number | null;
+  // age: number | null;
   nation: string;
   martalStatus: string;
   vocationStatus: string;
@@ -29,7 +29,7 @@ const ruleForm: PatientForm = reactive({
   phoneNumber: '',
   sex: '',
   brithDate: '',
-  age: null,
+  // age: null,
   nation: '',
   martalStatus: '',
   vocationStatus: '',
@@ -38,12 +38,17 @@ const ruleForm: PatientForm = reactive({
   familyAddress: '',
   // treatmentPhase: ''
 })
+const form = ref()
+const resetForm = () => {
+  form.value.resetFields()
+}
 const emit = defineEmits(['added'])
 const handleSave = async () => {
   dialogVisible.value = false
   const res:any = await getAddPatientAPI(ruleForm)
   if (res.code === 200) {
     ElMessage.success('添加成功！')
+    resetForm()
     emit('added')
   }
   else {
@@ -54,8 +59,8 @@ const handleSave = async () => {
 
 <template>
   <!-- 新增患者 -->
-  <el-dialog v-model="dialogVisible" title="新增患者" :align-center="true">
-    <el-form :model="ruleForm" label-width="120px">
+  <el-dialog v-model="dialogVisible" title="新增患者" :align-center="true" destroy-on-close>
+    <el-form :model="ruleForm" label-width="120px" ref="form">
       <el-form-item label="姓名" prop="name">
         <el-input v-model="ruleForm.name"></el-input>
       </el-form-item>
@@ -76,23 +81,22 @@ const handleSave = async () => {
         </el-select>
       </el-form-item>
       <el-form-item label="出生日期" prop="brithDate">
-        <!-- <el-input v-model="ruleForm.brithDate"></el-input> -->
-        <el-date-picker v-model="ruleForm.brithDate" type="date" placeholder="选择日期">
+        <el-date-picker v-model="ruleForm.brithDate" value-format="YYYY-MM-DD" type="date" placeholder="选择日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="年龄" prop="age">
+      <!-- <el-form-item label="年龄" prop="age">
         <el-input v-model="ruleForm.age"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="民族" prop="nation">
         <el-input v-model="ruleForm.nation"></el-input>
       </el-form-item>
-      <el-form-item label="婚姻状态" prop="martalStatus">
+      <el-form-item label="婚姻状况" prop="martalStatus">
         <el-input v-model="ruleForm.martalStatus"></el-input>
       </el-form-item>
-      <el-form-item label="职业状态" prop="vocationStatus">
+      <el-form-item label="职业状况" prop="vocationStatus">
         <el-input v-model="ruleForm.vocationStatus"></el-input>
       </el-form-item>
-      <el-form-item label="月收入" prop="monthIncome">
+      <el-form-item label="家庭月均收入" prop="monthIncome">
         <el-input v-model="ruleForm.monthIncome"></el-input>
       </el-form-item>
       <el-form-item label="文化程度" prop="educationDegree">
@@ -108,7 +112,7 @@ const handleSave = async () => {
     <template #footer>
       <div class="dialog-footer">
         <el-button type="primary" @click="handleSave">
-          新增
+          新增患者
         </el-button>
       </div>
     </template>
