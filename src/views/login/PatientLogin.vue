@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router';
 import Button from './components/Button.vue';
 import Header from './components/Header.vue';
 import { getPatientLoginAPI } from "@/api/user"
-
 const router = useRouter();
 // 返回选择角色
 const returnLogin = () => {
@@ -14,12 +13,14 @@ const returnLogin = () => {
 const loginData = ref({
     medicalRecord:""
 })
+
 const login = async () => {
     // const res = await getPatientLoginAPI(loginData.value.medicalRecord)
     // if (res.code === 0) {
     //     router.push('/patient');
     // }
     router.push('/patient');
+    // router.push({ name: 'patient', params: { id: loginData.value.medicalRecord } });
 };
 </script>
 

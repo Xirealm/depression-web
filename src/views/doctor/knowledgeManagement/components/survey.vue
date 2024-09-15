@@ -1,7 +1,8 @@
 <template>
     <div v-if="$props.questionFormid !== 4">
         <div class="text-lg text-slate-800 w-full text-wrap">{{ $props.testtitle }}</div>
-        <div v-for="(item, index) in $props.infor" :key="index" class="form">
+        <div v-for="(item, index) in $props.infor.filter((item: ifo) => item.questionOrder !== '0')" :key="index"
+            class="form">
             <div class="question">{{ index + 1 }}. {{ item.questionContext }}</div>
             <el-radio :value="$props.choice[0]" size="large" v-model="answer[index]">{{ $props.choice[0] }}</el-radio>
             <el-radio :value="$props.choice[1]" size="large" v-model="answer[index]">{{ $props.choice[1] }}</el-radio>
@@ -17,7 +18,8 @@
                 <div class="onerow" v-for="(c, i) in $props.choice[0]" :key="i">{{ c }}</div>
             </div>
         </div>
-        <div class="table" v-for="(item, index) in $props.infor" :key="index">
+        <div class="table" v-for="(item, index) in $props.infor.filter((item: ifo) => item.questionOrder !== '0')"
+            :key="index">
             <div class="choice flex flex-nowrap" v-if="index < 24">
                 <div class="onechoice" style="width: 16%;">C{{index+1+' ' + item.questionContext }}</div>
                 <div class="flex flex-nowrap" style="width: 80%;">
@@ -41,7 +43,8 @@
                 <div class="onerow" v-for="(c, i) in $props.choice[1]" :key="i">{{ c }}</div>
             </div>
         </div>
-        <div class="table" v-for="(item, index) in $props.infor" :key="index">
+        <div class="table" v-for="(item, index) in $props.infor.filter((item: ifo) => item.questionOrder !== '0')"
+            :key="index">
             <div class="choice flex flex-nowrap" v-if="index > 23 && index <33">
                 <div class="onechoice" style="width: 16%;">C{{ index + 1 + ' ' + item.questionContext }}</div>
                 <div class="flex flex-nowrap" style="width: 80%;">
@@ -65,7 +68,8 @@
                 <div class="onerow" v-for="(c, i) in $props.choice[2]" :key="i">{{ c }}</div>
             </div>
         </div>
-        <div class="table" v-for="(item, index) in $props.infor" :key="index">
+        <div class="table" v-for="(item, index) in $props.infor.filter((item: ifo) => item.questionOrder !== '0')"
+            :key="index">
             <div class="choice flex flex-nowrap" v-if="index > 32">
                 <div class="onechoice" style="width: 16%;">C{{ index + 1 + ' ' + item.questionContext }}</div>
                 <div class="flex flex-nowrap" style="width: 80%;">
@@ -83,39 +87,74 @@
             </div>
         </div>
     </div>
+    <el-button class="my-7 ml-3" color="#49998F" size="default" @click="submit">提交</el-button>
 </template>
 
 
 <script setup lang="ts">
-import { defineProps,onMounted,reactive,ref} from 'vue';
+import { ref} from 'vue';
+import { ElMessage } from 'element-plus'
+import { saveNewQuestionnaire } from "@/api/patientFunction"
 type ifo = {
     id:number,
     questionOrder:string,
     questionContext:string
 }
+type newq = {
+    questionOrder:number,
+    questionChoice:string
+}
 const props = defineProps<{
     infor:ifo[],
     testtitle:string,
     choice:string[] | string[][],
-    questionFormid:number
+    questionFormid:number,
+    madicalRecord: string | string[]
 }>()
-onMounted(()=>{
-    props.infor.forEach((item)=>{
-        tableData.push({
-            questionContext:item.questionContext
-        })
-    })
-    console.log(tableData)
-})
 // const send = defineEmits(['sendanswer'])
 let answer = ref<string[]>([])
-type table = {
-    questionContext:string
-}
-let tableData = reactive<table[]>([])
 // const changeanswer = () =>{
 //    send('sendanswer',answer)
 // }
+const submit = () =>{
+  let arr = props.infor.filter((item: ifo) => item.questionOrder !== '0') 
+  if(answer.value.length<arr.length){
+    ElMessage({
+        message: '请完成测验后再提交.',
+        type: 'warning',
+    })
+    return
+  }
+//   send('sendanswer', answer)
+    let newQuestions: newq[] = []
+    let order = 1
+    answer.value.forEach((item)=>{
+        newQuestions.push({
+            questionOrder:order,
+            questionChoice:item
+        })
+        order++
+    })
+    let save = {
+        madicalRecord:props.madicalRecord,
+        questionForm:props.questionFormid,
+        treatment:'1',
+        newQuestions: newQuestions
+    }
+    console.log(save)
+    saveNewQuestionnaire(save).then((res:any)=>{
+        ElMessage({
+            message: '提交成功.',
+            type: 'success',
+        })
+        answer.value = []
+    }).catch((err:any)=>{
+        ElMessage({
+            message: err.mes,
+            type: 'warning',
+        })
+    })
+}
 </script>
 
 <style scoped>

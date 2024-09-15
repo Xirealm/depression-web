@@ -1,36 +1,31 @@
 <template>
   <el-card class="mx-8 py-4">
     <el-scrollbar height="78vh">
-    <div class="border-r-2 border-slate-100 mx-8">
-      <div class="box" v-for="(item, index) in source" :key="index">
-        <div class="title">
-          <div v-if="index == 0">
-            <svg-icon1 src="../../../components/icons/main.svg" width="24" height='23' class="svg-icon" />
+      <div class="border-r-2 border-slate-100 mx-8">
+        <div class="box" v-for="(item, index) in source" :key="index">
+          <div class="title">
+            <div v-if="index == 0">
+              <svg-icon1 src="../../../components/icons/main.svg" width="24" height='23' class="svg-icon" />
+            </div>
+            <div v-if="index == 1">
+              <svg-icon2 src="../../../components/icons/email.svg" width="20" height="20" class="svg-icon" />
+            </div>
+            <div v-if="index == 2">
+              <svg-icon3 src="../../../components/icons/account.svg" width="20" height="20" class="svg-icon" />
+            </div>
+            <span class="ml-2">{{ item.title }}</span>
           </div>
-          <div v-if="index == 1">
-            <svg-icon2 src="../../../components/icons/email.svg" width="20" height="20" class="svg-icon" />
+          <div class="select" v-for="(select, i) in item.tests" :key="i" @click="open(select, item.title,i)">{{ select
+            }}
           </div>
-          <div v-if="index == 2">
-            <svg-icon3 src="../../../components/icons/account.svg" width="20" height="20" class="svg-icon" />
-          </div>
-          <span class="ml-2">{{ item.title }}</span>
-        </div>
-        <div class="select" v-for="(select, i) in item.tests" :key="i" @click="open(select, item.title,i)">{{ select }}
         </div>
       </div>
-    </div>
     </el-scrollbar>
   </el-card>
   <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" :align-center="true" destroy-on-close="true">
     <el-scrollbar height="80vh">
-      <survey 
-        v-if="title==='评估'"
-        :questionFormid="questionFormid" 
-        :infor="test" 
-        :testtitle="testtitle" 
-        :choice="choice" 
-        @sendanswer="getanswer"
-      />
+      <survey v-if="title==='评估'" :questionFormid="questionFormid" :infor="test" :testtitle="testtitle" :choice="choice"
+        @sendanswer="getanswer" :madicalRecord="''" />
       <div v-if="title === '视频'" class="h-[80vh] flex items-center">
         <video v-if="testname !== '愉快事件表具体表格.png'" class="w-full" controls>
           <source :src="videosrc" type="video/quicktime" v-if="testname.slice(-3) === 'mov'">
