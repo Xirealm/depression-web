@@ -4,24 +4,24 @@
       <el-form :model="form" label-width="auto" class="w-full">
         <div class="flex justify-between w-[100%]">
           <el-form-item label="患者姓名">
-              <el-input v-model="form.name" style="width: 250px" />
+              <el-input v-model="form.name" style="width: 250px" clearable/>
             </el-form-item>
             <el-form-item label="病例号">
-              <el-input v-model="form.madicalRecord" style="width: 250px" />
+              <el-input v-model="form.madicalRecord" style="width: 250px" clearable/>
             </el-form-item>
             <el-form-item label="性别">
-              <el-select v-model="form.sex" style="width: 250px">
+              <el-select v-model="form.sex" style="width: 250px" clearable>
                 <el-option label="男" value="男" />
                 <el-option label="女" value="女" />
               </el-select>
             </el-form-item>
             <el-form-item label="治疗阶段">
-              <el-select v-model="form.treatmentPhase" style="width: 250px;">
+              <el-select v-model="form.treatmentPhase" style="width: 250px;" clearable>
                 <el-option 
                   v-for="item in TreatmentPhases" 
-                  :label="item.label" 
-                  :value="item.value"
-                  :key="item" />
+                  :label="item" 
+                  :value="item"
+                  :key="item"/>
               </el-select> 
             </el-form-item>
             <el-button type="primary" @click="getPatientPage">查询</el-button>
@@ -132,52 +132,7 @@ const form = reactive<SearchForm>({
   treatmentPhase: ''
 })
 
-const TreatmentPhases = [
-  {
-    label: '未开始',
-    value: 0
-  },
-  {
-    label: '已结束',
-    value: -1
-  },
-  {
-    label: '第一次',
-    value: 1
-  },
-  {
-    label: '第二次',
-    value: 2
-  },
-  {
-    label: '第三次',
-    value: 3
-  },
-  {
-    label: '第四次',
-    value: 4
-  },
-  {
-    label: '第五次',
-    value: 5
-  },
-  {
-    label: '第六次',
-    value: 6
-  },
-  {
-    label: '第七次',
-    value: 7
-  },
-  {
-    label: '第八次',
-    value: 8
-  },
-  {
-    label: '第九次',
-    value: 9
-  }  
-]
+const TreatmentPhases = ['未开始','已结束', '第一次','第二次','第三次','第四次','第五次','第六次','第七次','第八次','第九次']
 
 //分页
 const total = ref(0)
@@ -195,7 +150,7 @@ const handlePageChange = (val: any) => {
 }
 //渲染列表
 // const TreatmentPhases = ref([])
-const uniqueTreatmentPhases = ref<any[]>([]);
+// const uniqueTreatmentPhases = ref<any[]>([]);
 const page = reactive({
   currentPage: 1,
   pageSize: 10,

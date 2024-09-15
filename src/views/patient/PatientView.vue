@@ -1,7 +1,7 @@
 <template>
   <Header />
   <el-card class="mx-8 py-4 mt-6">
-    <el-scrollbar height="78vh">
+    <el-scrollbar height="70vh">
       <div>
         <survey v-if="page <= allmes[0].length" :questionFormid="allmes[0][num].questionForm"
           :infor="allmes[0][num].newQuestionsVO" :testtitle="testtitle[num]" :choice="choices[num]"
@@ -22,7 +22,7 @@
   </el-card>
   <!-- 翻页和评分按钮 -->
   <div class="flex justify-between px-9">
-    <el-button type="warning" class="my-7 " round @click="centerDialogVisible = true">评分</el-button>
+    <el-button type="warning" class="my-7" round @click="centerDialogVisible = true">评分</el-button>
     <div>
       <el-button class="my-7" color="#49998F" size="default" @click="pageup"
         :disabled="page === 1 ? true : false">上一页</el-button>

@@ -19,8 +19,8 @@ const login = async () => {
     // if (res.code === 0) {
     //     router.push('/patient');
     // }
-    router.push('/patient');
-    // router.push({ name: 'patient', params: { id: loginData.value.medicalRecord } });
+    // router.push('/patient');
+    router.push({ name: 'patient', params: { id: loginData.value.medicalRecord } });
 };
 </script>
 
