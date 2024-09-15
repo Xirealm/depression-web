@@ -1,7 +1,6 @@
 <template>
   <el-card class="mx-8">
     <div class="box">
-      <!-- 查询 -->
       <el-form :model="form" label-width="auto" class="w-full">
         <div class="flex justify-between w-[100%]">
           <el-form-item label="患者姓名">
@@ -11,10 +10,13 @@
               <el-input v-model="form.madicalRecord" style="width: 250px" />
             </el-form-item>
             <el-form-item label="性别">
-              <el-input v-model="form.sex" style="width: 250px" />
+              <el-select v-model="form.sex" style="width: 250px">
+                <el-option label="男" value="男" />
+                <el-option label="女" value="女" />
+              </el-select>
             </el-form-item>
             <el-form-item label="治疗阶段">
-              <el-select v-model="form.treatmentPhase" placeholder="" style="width: 250px;">
+              <el-select v-model="form.treatmentPhase" style="width: 250px;">
                 <el-option 
                   v-for="item in TreatmentPhases" 
                   :label="item.label" 
@@ -30,9 +32,8 @@
         </div>
       </el-form>
     </div>
-    <div>
-      <!-- 表格 -->
-      <el-table :data="dataTable.list" height="65vh" size="large" @selection-change="handleSelectionChange">
+    <div class="mt-2">
+      <el-table :data="dataTable.list" height="65vh" size="large" border @selection-change="handleSelectionChange">
         <el-table-column type=selection width="55"></el-table-column>
         <el-table-column type="index" label="序号" width="100px"></el-table-column>
         <el-table-column label="姓名" prop="name"></el-table-column>
