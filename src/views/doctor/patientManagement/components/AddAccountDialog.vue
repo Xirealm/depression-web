@@ -72,10 +72,16 @@ const handleSave = async () => {
         <el-input v-model="ruleForm.phoneNumber"></el-input>
       </el-form-item>
       <el-form-item label="性别" prop="sex">
-        <el-input v-model="ruleForm.sex"></el-input>
+        <!-- <el-input v-model="ruleForm.sex"></el-input> -->
+        <el-select v-model="ruleForm.sex">
+          <el-option label="男" value="男"></el-option>
+          <el-option label="女" value="女"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="出生日期" prop="brithDate">
-        <el-input v-model="ruleForm.brithDate"></el-input>
+        <!-- <el-input v-model="ruleForm.brithDate"></el-input> -->
+        <el-date-picker v-model="ruleForm.brithDate" type="date" placeholder="选择日期">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="年龄" prop="age">
         <el-input v-model="ruleForm.age"></el-input>

@@ -20,18 +20,19 @@
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="治疗阶段" style="width: 450px;display:flex; align-items: center;margin-left: 90px;">
+            <el-form-item label="治疗阶段" style="width: 515px;display:flex; align-items: center;margin-left: 90px;">
               <el-select v-model="form.treatmentPhase" placeholder="未开始" style="flex: 1;width: 250px;">
-                <el-option v-for="n in 5" :label="`第${n}次`" :value="`time${n}`" :key="n" />
+                <el-option v-for="item in uniqueTreatmentPhases" :label="item" :value="item"
+                  :key="item" />
               </el-select>
-              <el-button type="primary" @click="getPatientPage" style="margin-left: 100px;">查询</el-button>
+              <el-button type="primary" @click="getPatientPage" style="margin-left: 200px;">查询</el-button>
             </el-form-item>
           </el-col>
-          
+
         </el-row>
         <el-row type="flex" justify="end">
-          <el-col :span="4">
-            <el-form-item :span="18" style="margin-right: 100px;">
+          <el-col :span="3">
+            <el-form-item :span="18" style="margin-right: 10px;">
               <el-button type="primary" @click="getAddPatient">新增</el-button>
               <el-button type="primary" @click="getDelete">批量删除</el-button>
             </el-form-item>
@@ -52,9 +53,9 @@
         <el-table-column label="婚姻状况" prop="martalStatus"></el-table-column>
         <el-table-column label="职业状况" prop="vocationStatus"></el-table-column>
         <el-table-column label="治疗阶段" prop="treatmentPhase">
-          <template #default="scope" >
+          <template #default="scope">
             <!-- <div v-if="scope.row.phase?.isEnded">已结束</div> -->
-            <span >{{ scope.row.treatmentPhase }}</span>
+            <span>{{ scope.row.treatmentPhase }}</span>
             <!-- <el-button type="text" size="small" @click="PatientsExport(scope.row.id,scope.row.treatmentPhase)">导出</el-button> -->
           </template>
         </el-table-column>
@@ -65,35 +66,27 @@
         </el-table-column>
         <el-table-column label="个人信息" prop="assignment">
           <template #default="scope">
-            <el-link type="primary" class="link-space" @click="lookInfo(scope.row)"
-              >查看信息
+            <el-link type="primary" class="link-space" @click="lookInfo(scope.row)">查看信息
             </el-link>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="250px" class="caozuo">
           <template #default="scope">
-            <el-link 
-              type="primary" class="link-space" 
-              @click="distributeTreatment(scope.row.madicalRecord,scope.row.questionnaireId,scope.row.articleId,scope.row.videoName)">
-                下发治疗
-              </el-link>
+            <el-link type="primary" class="link-space"
+              @click="distributeTreatment(scope.row.madicalRecord, scope.row.questionnaireId, scope.row.articleId, scope.row.videoName)">
+              下发治疗
+            </el-link>
             <el-link type="primary" class="link-space" @click="endTreatment(scope.row.madicalRecord)">结束治疗</el-link>
             <el-link type="primary" class="link-space" @click="getDeleteById(scope.row.id)">删除</el-link>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        :page-size="page.pageSize"
-        :current-page="page.currentPage"
-        layout="prev, pager, next"
-        :total="total"
-        @current-change="handlePageChange"
-        @size-change="handleSizeChange"/>  
+      <el-pagination background :page-size="page.pageSize" :current-page="page.currentPage" layout="prev, pager, next"
+        :total="total" @current-change="handlePageChange" @size-change="handleSizeChange" />
     </div>
   </el-card>
-  
- <!-- <el-dialog
+
+  <!-- <el-dialog
     v-model="treatmentDialogVisible"
     title="治疗情况"
     width="40%">
@@ -110,21 +103,22 @@
     </div>
   </el-dialog> -->
 
-  <AddAccountDialog v-model="dialogVisible" @added="getPatientPage"/>
+  <AddAccountDialog v-model="dialogVisible" @added="getPatientPage" />
   <LookInfoDialog v-model="viewDialogVisible" ref="LookInfoRef" @edited="getPatientPage" />
-  <SendTreatmentDialog ref="SendTreatmentDialogRef" @sended="getPatientPage"/>
-  <TreatmentResultDialog v-model="treatmentDialogVisible" ref="QuestionnaireResultRef" @getted="handleUpdate " @update="handleUpdate" />
+  <SendTreatmentDialog ref="SendTreatmentDialogRef" @sended="getPatientPage" />
+  <TreatmentResultDialog v-model="treatmentDialogVisible" ref="QuestionnaireResultRef" @getted="handleUpdate"
+    @update="handleUpdate" />
 </template>
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
 import { getDeleteByIdAPI } from '@/api/patientManage.js'
-import {getCountAPI} from '@/api/patientManage.js'
+import { getCountAPI } from '@/api/patientManage.js'
 import { getDeleteAPI } from '@/api/patientManage.js'
 import { getPatientPageAPI } from '@/api/patientManage.js'
 import { getEndPatientAPI } from '@/api/patientManage.js'
-import {getPatientsExportAPI} from '@/api/patientManage.js'
+import { getPatientsExportAPI } from '@/api/patientManage.js'
 // import {getQuestionnaireResultAPI} from '@/api/patientManage.js'
 import AddAccountDialog from './components/AddAccountDialog.vue'
 import LookInfoDialog from './components/LookInfoDialog.vue'
@@ -132,55 +126,64 @@ import SendTreatmentDialog from './components/SendTreatmentDialog.vue'
 import TreatmentResultDialog from './components/TreatmentResultDialog.vue'
 
 //查询  
-interface SearchForm{
-  id?:number|null;
-  name?:string|null;
-  madicalRecord?:string|null;
-  sex?:string|null
-  treatmentPhase?:string|null
+interface SearchForm {
+  id?: number | null;
+  name?: string | null;
+  madicalRecord?: string | null;
+  sex?: string | null
+  treatmentPhase?: string | null
 }
-const form=reactive<SearchForm>({
-  id:null,
-  name:'',
-  madicalRecord:'',
-  sex:'',
+const form = reactive<SearchForm>({
+  id: null,
+  name: '',
+  madicalRecord: '',
+  sex: '',
   treatmentPhase: ''
 })
 
 //分页
-const total=ref(0)
-const getCount=async ()=>{
-  const res=await getCountAPI()
+const total = ref(0)
+const getCount = async () => {
+  const res = await getCountAPI()
   console.log(res)
 }
-const handleSizeChange=(val:any)=>{
-  page.pageSize=val
+const handleSizeChange = (val: any) => {
+  page.pageSize = val
   getPatientPage()
 }
-const handlePageChange=(val:any)=>{
-  page.currentPage=val
+const handlePageChange = (val: any) => {
+  page.currentPage = val
   getPatientPage()
 }
 //渲染列表
+const TreatmentPhases = ref([])
+const uniqueTreatmentPhases = ref([]);
 const page = reactive({
   currentPage: 1,
   pageSize: 10,
-  name:'',
-  madicalRecord:'',
+  name: '',
+  madicalRecord: '',
   treatmentPhase: '',
   sex: ''
 })
 // const data = reactive({})
 const getPatientPage = async () => {
-  const res = await getPatientPageAPI(page.currentPage, page.pageSize,page.name,page.madicalRecord,page.treatmentPhase,page.sex)
+  const res = await getPatientPageAPI(page.currentPage, page.pageSize, page.name, page.madicalRecord, page.treatmentPhase, page.sex)
   console.log(res)
-  if(form.name){
-    dataTable.list=res.data.filter((item:any)=>{
-      return item.name==form.name
+  TreatmentPhases.value = res.data
+
+  const treatmentPhasesSet = new Set();
+  res.data.forEach(item => {
+    treatmentPhasesSet.add(item.treatmentPhase);
+  });
+  uniqueTreatmentPhases.value = Array.from(treatmentPhasesSet);
+  if (form.name) {
+    dataTable.list = res.data.filter((item: any) => {
+      return item.name == form.name
     })
-  }else{
-      dataTable.list=res.data
-    }
+  } else {
+    dataTable.list = res.data
+  }
   // getPatientPage()
   // dataTable.list = res.data
   // console.log(res.data[0].madicalRecord)
@@ -188,10 +191,10 @@ const getPatientPage = async () => {
 onMounted(() => {
   getPatientPage()
   getCount()
-  PatientsExport(page.madicalRecord,page.treatmentPhase)
+  // PatientsExport(page.id,page.treatmentPhase)
 })
 //新增患者
-const dataTable:any = reactive({
+const dataTable: any = reactive({
   list: [],
   pageSize: 10,
   currentPage: 1
@@ -202,9 +205,9 @@ const getAddPatient = () => {
 }
 
 //查看信息（修改）
-const LookInfoRef=ref()
+const LookInfoRef = ref()
 const viewDialogVisible = ref(false)
-const lookInfo =  (row:any)=>{
+const lookInfo = (row: any) => {
   viewDialogVisible.value = true;
   // console.log('chakan')
   LookInfoRef.value.EditInfo(row)
@@ -220,21 +223,21 @@ const lookInfo =  (row:any)=>{
 //   feedback
 // })
 // const treatmentData = ref([])
-const QuestionnaireResultRef=ref()
-const newArr=ref([])
-const treatmentDialogVisible=ref(false)
+const QuestionnaireResultRef = ref()
+const newArr = ref([])
+const treatmentDialogVisible = ref(false)
 const medicalRecord = ref('')
 const handleGetted = async () => {
   await QuestionnaireResultRef.value.getQuestionnaireResult(medicalRecord.value)
-  
+
   // console.log(madicalRecord)
   // await QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
   // treatmentDialogVisible.value=false
   // QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
-  
+
 };
-const handleUpdate=(data:any)=>{
-  newArr.value=data
+const handleUpdate = (data: any) => {
+  newArr.value = data
   treatmentDialogVisible.value = true;
 }
 // const handleUpdate=(data:any)=>{
@@ -249,10 +252,10 @@ const handleUpdate=(data:any)=>{
 //   const res=await getQuestionnaireResultAPI(madicalRecord)
 //   console.log(res)
 //   arr.list1=res.results
-  
+
 // }
 //单条删除 
-const getDeleteById = async (id:number) => {
+const getDeleteById = async (id: number) => {
   try {
     const res = await getDeleteByIdAPI(id);
     console.log(res)
@@ -262,8 +265,8 @@ const getDeleteById = async (id:number) => {
         type: 'success',
         plain: true,
       });
-        dataTable.list.splice(id,1)
-        getPatientPage();
+      dataTable.list.splice(id, 1)
+      getPatientPage();
     } else {
       ElMessage({
         message: '删除失败',
@@ -283,7 +286,7 @@ const getDeleteById = async (id:number) => {
 
 // //批量删除 
 const selectedPatient = ref([])
-const handleSelectionChange = (val:any) => {
+const handleSelectionChange = (val: any) => {
   selectedPatient.value = val
 }
 const getDelete = async () => {
@@ -297,7 +300,7 @@ const getDelete = async () => {
   }
   try {
     const ids = selectedPatient.value.map(patient => patient.id).join(',')
-    const res:any = await getDeleteAPI(ids)
+    const res: any = await getDeleteAPI(ids)
     console.log(res)
     if (res.code === 200) {
       ElMessage({
@@ -323,22 +326,24 @@ const getDelete = async () => {
   }
 }
 //导出治疗阶段
-const PatientsExport=async(madicalRecord:any,treatmentPhase:any)=>{
-  const res=await getPatientsExportAPI(madicalRecord,treatmentPhase)
+
+const PatientsExport = async (id: any, treatmentPhase: any) => {
+  const res = await getPatientsExportAPI(id, treatmentPhase)
+  // TreatmentPhases.value=res.data
   console.log(res)
   getPatientPage()
 }
 
 // 下发治疗
-const assignTreatmentDialogVisible=ref(false)
+const assignTreatmentDialogVisible = ref(false)
 const SendTreatmentDialogRef = ref()
-const distributeTreatment=async (madicalRecord:string,questionnaireId:string,articleId:string,videoName:string)=>{
+const distributeTreatment = async (madicalRecord: string, questionnaireId: string, articleId: string, videoName: string) => {
   // assignTreatmentDialogVisible.value = true;
   SendTreatmentDialogRef.value.open(madicalRecord)
 }
 //结束治疗
-const endTreatment=async (madicalRecord:string)=>{
-  const res:any=await getEndPatientAPI(madicalRecord)
+const endTreatment = async (madicalRecord: string) => {
+  const res: any = await getEndPatientAPI(madicalRecord)
   console.log(res)
 }
 
@@ -371,5 +376,4 @@ label {
 .link-space {
   margin-right: 10px;
 }
-
 </style>
