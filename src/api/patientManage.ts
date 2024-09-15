@@ -101,7 +101,7 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   // }
   //治疗情况（获取问卷结果）
   export const getQuestionnaireResultAPI=(madicalRecord:string)=>{
-    return http.get(`/newQuestionnaire/getQuestionnaireResult?madicalRecord=${madicalRecord}`,{
+    return http.get("/newQuestionnaire/getQuestionnaireResult",{
       params:{
         madicalRecord
       }

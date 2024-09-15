@@ -2,42 +2,32 @@
   <el-card class="mx-8">
     <div class="box">
       <!-- 查询 -->
-      <el-form :model="form" label-width="auto" class="forms" :inline="true">
-        <el-row :gutter="20">
-          <el-col :span="5">
-            <el-form-item label="患者姓名">
+      <el-form :model="form" label-width="auto" class="w-full">
+        <div class="flex justify-between w-[100%]">
+          <el-form-item label="患者姓名">
               <el-input v-model="form.name" style="width: 250px" />
             </el-form-item>
-          </el-col>
-          <el-col :span="5">
             <el-form-item label="病例号">
               <el-input v-model="form.madicalRecord" style="width: 250px" />
             </el-form-item>
-          </el-col>
-          <el-col :span="4" style="text-align: right">
             <el-form-item label="性别">
               <el-input v-model="form.sex" style="width: 250px" />
             </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item label="治疗阶段" style="width: 515px;display:flex; align-items: center;margin-left: 90px;">
-              <el-select v-model="form.treatmentPhase" placeholder="未开始" style="flex: 1;width: 250px;">
-                <el-option v-for="item in uniqueTreatmentPhases" :label="item" :value="item"
+            <el-form-item label="治疗阶段">
+              <el-select v-model="form.treatmentPhase" placeholder="" style="width: 250px;">
+                <el-option 
+                  v-for="item in TreatmentPhases" 
+                  :label="item.label" 
+                  :value="item.value"
                   :key="item" />
-              </el-select>
-              <el-button type="primary" @click="getPatientPage" style="margin-left: 200px;">查询</el-button>
+              </el-select> 
             </el-form-item>
-          </el-col>
-
-        </el-row>
-        <el-row type="flex" justify="end">
-          <el-col :span="3">
-            <el-form-item :span="18" style="margin-right: 10px;">
-              <el-button type="primary" @click="getAddPatient">新增</el-button>
-              <el-button type="primary" @click="getDelete">批量删除</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
+            <el-button type="primary" @click="getPatientPage">查询</el-button>
+        </div>
+        <div class="flex justify-end">
+          <el-button type="primary" @click="getAddPatient">新增患者</el-button>
+          <el-button type="danger" @click="getDelete">批量删除</el-button>
+        </div>
       </el-form>
     </div>
     <div>
@@ -127,19 +117,66 @@ import TreatmentResultDialog from './components/TreatmentResultDialog.vue'
 
 //查询  
 interface SearchForm {
-  id?: number | null;
-  name?: string | null;
-  madicalRecord?: string | null;
-  sex?: string | null
-  treatmentPhase?: string | null
+  id?: string
+  name?: string
+  madicalRecord?: string
+  sex?: string
+  treatmentPhase?: string 
 }
 const form = reactive<SearchForm>({
-  id: null,
+  id: '',
   name: '',
   madicalRecord: '',
   sex: '',
   treatmentPhase: ''
 })
+
+const TreatmentPhases = [
+  {
+    label: '未开始',
+    value: 0
+  },
+  {
+    label: '已结束',
+    value: -1
+  },
+  {
+    label: '第一次',
+    value: 1
+  },
+  {
+    label: '第二次',
+    value: 2
+  },
+  {
+    label: '第三次',
+    value: 3
+  },
+  {
+    label: '第四次',
+    value: 4
+  },
+  {
+    label: '第五次',
+    value: 5
+  },
+  {
+    label: '第六次',
+    value: 6
+  },
+  {
+    label: '第七次',
+    value: 7
+  },
+  {
+    label: '第八次',
+    value: 8
+  },
+  {
+    label: '第九次',
+    value: 9
+  }  
+]
 
 //分页
 const total = ref(0)
@@ -156,8 +193,8 @@ const handlePageChange = (val: any) => {
   getPatientPage()
 }
 //渲染列表
-const TreatmentPhases = ref([])
-const uniqueTreatmentPhases = ref([]);
+// const TreatmentPhases = ref([])
+const uniqueTreatmentPhases = ref<any[]>([]);
 const page = reactive({
   currentPage: 1,
   pageSize: 10,
@@ -168,25 +205,19 @@ const page = reactive({
 })
 // const data = reactive({})
 const getPatientPage = async () => {
-  const res = await getPatientPageAPI(page.currentPage, page.pageSize, page.name, page.madicalRecord, page.treatmentPhase, page.sex)
+  const res = await getPatientPageAPI(page.currentPage, page.pageSize, form.name, form.madicalRecord, form.treatmentPhase, form.sex)
   console.log(res)
-  TreatmentPhases.value = res.data
-
-  const treatmentPhasesSet = new Set();
-  res.data.forEach(item => {
-    treatmentPhasesSet.add(item.treatmentPhase);
-  });
-  uniqueTreatmentPhases.value = Array.from(treatmentPhasesSet);
-  if (form.name) {
-    dataTable.list = res.data.filter((item: any) => {
-      return item.name == form.name
-    })
-  } else {
+  if(res.code === 200){
     dataTable.list = res.data
+  } else {
+    ElMessage.error(`${res.msg}`)
+    dataTable.list = []
   }
-  // getPatientPage()
-  // dataTable.list = res.data
-  // console.log(res.data[0].madicalRecord)
+  // const treatmentPhasesSet = new Set();
+  // res.data.forEach((item: any) => {
+  //   treatmentPhasesSet.add(item.treatmentPhase);
+  // });
+  // uniqueTreatmentPhases.value = Array.from(treatmentPhasesSet);
 }
 onMounted(() => {
   getPatientPage()
@@ -226,12 +257,9 @@ const lookInfo = (row: any) => {
 const QuestionnaireResultRef = ref()
 const newArr = ref([])
 const treatmentDialogVisible = ref(false)
-const medicalRecord = ref('')
-const handleGetted = async () => {
-  await QuestionnaireResultRef.value.getQuestionnaireResult(medicalRecord.value)
-
-  // console.log(madicalRecord)
-  // await QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
+const handleGetted = async (madicalRecord: string) => {
+  console.log(madicalRecord);
+  await QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
   // treatmentDialogVisible.value=false
   // QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
 
@@ -252,7 +280,6 @@ const handleUpdate = (data: any) => {
 //   const res=await getQuestionnaireResultAPI(madicalRecord)
 //   console.log(res)
 //   arr.list1=res.results
-
 // }
 //单条删除 
 const getDeleteById = async (id: number) => {
@@ -326,7 +353,6 @@ const getDelete = async () => {
   }
 }
 //导出治疗阶段
-
 const PatientsExport = async (id: any, treatmentPhase: any) => {
   const res = await getPatientsExportAPI(id, treatmentPhase)
   // TreatmentPhases.value=res.data
@@ -346,8 +372,6 @@ const endTreatment = async (madicalRecord: string) => {
   const res: any = await getEndPatientAPI(madicalRecord)
   console.log(res)
 }
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -355,11 +379,6 @@ const endTreatment = async (madicalRecord: string) => {
   display: flex;
   align-items: center;
   padding-top: 20px;
-}
-
-.forms {
-  max-width: 7000px;
-  margin-right: 20px;
 }
 
 .menu {
