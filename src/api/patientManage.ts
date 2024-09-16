@@ -4,11 +4,6 @@ import { http } from '@/utils/http'
 // import { put } from 'node_modules/axios/index.cjs'
 //单个患者删除
 export const getDeleteByIdAPI=(id:Number):any=>{
-    // return http.delete('/patients/deleteById'),{
-    //   params:{
-    //     id
-    //   }
-    // }
     return http({
       url:`/patients/deleteById?id=${id}`,
       method:'delete',
@@ -43,12 +38,6 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   }
 
   //分页列表  &&  条件查询
-  // export const getPatientPageAPI=(currentPage:Number,pageSize:Number):any=>{
-  //   return http.post(`patients/page?currentPage={currentPage}&pageSize={pageSize}`,{
-  //       currentPage,
-  //       pageSize
-  //   })
-  // }
   export const getPatientPageAPI=(currentPage:number,pageSize:number,name?:string,madicalRecord?:string,treatmentPhase?:string,sex?:String):any=>{
     return http.post(`/patients/page?currentPage=${currentPage}&pageSize=${pageSize}`, {
       currentPage,
@@ -82,11 +71,11 @@ export const getDeleteByIdAPI=(id:Number):any=>{
       method:'put'
     })
   }
-  //导出治疗阶段
-  export const getExportTreatmentAPI = (id:string,treatmentPhase:string)=>{
-    return http.get(`/patients/export?userId=${id}&treatmentPhase=${treatmentPhase}`,{
-    })
-  }
+  // //导出治疗阶段
+  // export const getExportTreatmentAPI = (id:string,treatmentPhase:string)=>{
+  //   return http.get(`/patients/export?userId=${id}&treatmentPhase=${treatmentPhase}`,{
+  //   })
+  // }
   // //导出治疗阶段全部
   // export const getPatientExportAllAPI=(userId:number)=>{
   //   return http.get(`/patients/exportAll?userId={}`,{

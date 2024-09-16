@@ -11,16 +11,11 @@
 .el-card{
     --el-card-border-radius:20px !important;
 }
-// .el-input__wrapper {
-//     box-shadow: none;
-// }
-// /* 移除 input 聚焦时的边框 */
-// .el-input__wrapper:hover {
-//     box-shadow: none !important;
-// }
-// .el-input__wrapper.is-focus {
-//     box-shadow: none !important;
-// }
+
+.el-dialog , .el-message-box{
+    border-radius: 10px;
+}
+
 .el-textarea__inner{
     padding: 8px 15px;
 }

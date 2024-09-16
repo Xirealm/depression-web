@@ -107,7 +107,6 @@ import { getDeleteByIdAPI } from '@/api/patientManage.js'
 import { getDeleteAPI } from '@/api/patientManage.js'
 import { getPatientPageAPI } from '@/api/patientManage.js'
 import { getEndPatientAPI } from '@/api/patientManage.js'
-// import {getQuestionnaireResultAPI} from '@/api/patientManage.js'
 import AddAccountDialog from './components/AddAccountDialog.vue'
 import LookInfoDialog from './components/LookInfoDialog.vue'
 import SendTreatmentDialog from './components/SendTreatmentDialog.vue'
@@ -129,7 +128,7 @@ const form = reactive<SearchForm>({
   treatmentPhase: ''
 })
 
-const TreatmentPhases = ['未开始','已结束', '第一次','第二次','第三次','第四次','第五次','第六次','第七次','第八次','第九次']
+const TreatmentPhases = ['未开始','已结束', '第一次','第二次','第三次','第四次','第五次','第六次','第七次','第八次','第九次','第十次',"第十一次","第十二次","第十三次","第十四次","第十五次"]
 
 //分页
 const total = ref(0)
@@ -137,9 +136,6 @@ const handlePageChange = (val: any) => {
   page.currentPage = val
   getPatientPage()
 }
-//渲染列表
-// const TreatmentPhases = ref([])
-// const uniqueTreatmentPhases = ref<any[]>([]);
 const page = reactive({
   currentPage: 1,
   pageSize: 10,
@@ -158,16 +154,9 @@ const getPatientPage = async () => {
     ElMessage.error(`${res.msg}`)
     dataTable.list = []
   }
-  // const treatmentPhasesSet = new Set();
-  // res.data.forEach((item: any) => {
-  //   treatmentPhasesSet.add(item.treatmentPhase);
-  // });
-  // uniqueTreatmentPhases.value = Array.from(treatmentPhasesSet);
 }
 onMounted(() => {
   getPatientPage()
-  // getCount()
-  // PatientsExport(page.id,page.treatmentPhase)
 })
 //新增患者
 const dataTable: any = reactive({

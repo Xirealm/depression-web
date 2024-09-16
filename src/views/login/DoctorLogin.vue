@@ -18,25 +18,28 @@ const loginData = ref({
     password: '',
 })
 const login = async () => {
-    const res = await postDoctorLoginAPI(loginData.value.username, loginData.value.password)
-    console.log(res);
-    
-    if (res.code === 0) {
-        ElMessage.success("登录成功")
-        if (loginData.value.username === "admin") {
-            userStore.setUser(loginData.value.username,"admin")
-        }else{
-            userStore.setUser(loginData.value.username,"doctor")
-        }
-        router.push('/doctor/patientManagement');
-    } else {
-        ElMessage.error(res.msg)
+    try {
+        const res = await postDoctorLoginAPI(loginData.value.username, loginData.value.password)
+        if (res.code === 0) {
+            ElMessage.success("登录成功")
+            if (loginData.value.username === "admin") {
+                userStore.setUser(loginData.value.username,"admin")
+            }else{
+                userStore.setUser(loginData.value.username,"doctor")
+            }
+            router.push('/doctor/patientManagement');
+            return
+        } else {
+            ElMessage.error(res.msg)
+        }         
+    } catch {
+        ElMessage.error("登录失败")
     }
 };
 </script>
 
 <template>
-    <Header></Header>
+    <Header />
     <Button class="mx-[15vw] mt-[10vh]" @click="returnLogin">
         返回
     </Button>

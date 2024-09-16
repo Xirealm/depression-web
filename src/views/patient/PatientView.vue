@@ -11,6 +11,7 @@
           :choice = "choices[num]"
           :madicalRecord = "madicalRecord" 
           :treatmentPhase = "treatmentPhase"
+          v-model="answerResult[num]"
         />
       </div>
       <div v-if="page > allmes[0].length && page <= (allmes[1].length + allmes[0].length)"
@@ -58,7 +59,8 @@
 import Header from './components/Header.vue';
 import survey from '@/views/doctor/knowledgeManagement/components/survey.vue'
 import { onMounted,reactive,ref,watch } from 'vue'
-import { getTreatmentPlan, userfeedback, postSaveTimeAPI } from "@/api/patientFunction"
+import { getTreatmentPlan, userfeedback, postSaveTimeAPI,saveNewQuestionnaire } from "@/api/patientFunction"
+
 import { formatTime } from '@/utils/time';
 import { useStore } from '@/stores/knowledge'
 import { useUserStore } from '@/stores/user';
@@ -101,6 +103,7 @@ const time = ref({
 })
 let allmes: any[][] = reactive([[],[],[]])
 let choices: any[] = reactive([])
+const answerResult = reactive<[][]>([])
 let testtitle: any[] = reactive([])
 const context = ref('')
 const centerDialogVisible  = ref(false)
@@ -124,7 +127,7 @@ onMounted(() => {
   time.value!.begin = new Date()
   madicalRecord.value = userStore.user.account
   getTreatmentPlan(madicalRecord.value).then((res: plan) => {
-    console.log(res)
+    // console.log(res)
     treatmentPhase.value = res.treatmentPhase
     if (res.questionnaire !== undefined) {
       res.questionnaire.forEach((item) => {
@@ -147,6 +150,10 @@ onMounted(() => {
     allmes[0] = res.questionnaire === undefined ? [] : res.questionnaire
     allmes[1] = res.video === undefined ? [] : res.video
     allmes[2] = res.article === undefined ? [] : res.article
+    console.log(allmes);
+    allmes[0].forEach(() => {
+      answerResult.push([])
+    })
     finalpage.value = allmes[0].length + allmes[1].length + allmes[2].length
     if (page.value > allmes[0].length + allmes[1].length) {
       context.value = allmes[2][num.value].context
@@ -231,6 +238,9 @@ const feedback = () =>{
   })
 }
 const finishTreatment = async () => {
+  allmes[0].forEach((item,index) => {
+    submit(index)
+  })
   time.value!.end = new Date()
   const completeTime = formatTime(time.value.end)
   const finishTime = Math.ceil(((Number(time.value.end) - Number(time.value.begin)) / 1000 / 60))
@@ -248,8 +258,40 @@ const finishTreatment = async () => {
     centerDialogVisible.value = true
   }
 }
+//提交问卷
+type newq = {
+    questionOrder:number,
+    questionChoice:string
+}
+const submit = async (num:number) =>{
+  let arr = allmes[0][num].newQuestionsVO.filter((item: ifo) => item.questionOrder !== '0') 
+  if(answerResult[num]!.length<arr.length){
+    ElMessage({
+        message: '请全部完成后再提交.',
+        type: 'warning',
+    })
+    return
+  }
+  let newQuestions: newq[] = []
+  let order = 1
+  answerResult[num]!.forEach((item)=>{
+    newQuestions.push({
+        questionOrder:order,
+        questionChoice:item
+    })
+    order++
+  })
+  const res = await saveNewQuestionnaire({
+    madicalRecord: madicalRecord.value,
+    questionForm: allmes[0][num].questionForm,
+    treatment: treatmentPhase.value,
+    newQuestions: newQuestions
+  })
+  if (res.code !== 0) {
+    ElMessage.error("问卷提交失败，请重新作答！")
+  }
+}
 </script>
-
 
 <style lang="scss" scoped>
 .demo-rate-block {

@@ -9,18 +9,18 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import svgLoader from 'vite-svg-loader'
 // https://vitejs.dev/config/
 export default defineConfig({
-  server: {
-    port: 8000,
-    // 自动打开浏览器
-    open: true,
-    proxy: {
-      '/api': {
-        target: '', 
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  },
+  // server: {
+  //   port: 8000,
+  //   // 自动打开浏览器
+  //   open: true,
+  //   proxy: {
+  //     '/api': {
+  //       target: '', 
+  //       changeOrigin: true,
+  //       rewrite: (path) => path.replace(/^\/api/, '')
+  //     }
+  //   }
+  // },
   plugins: [
     vue(),
     AutoImport({

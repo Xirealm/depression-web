@@ -22,10 +22,15 @@
       </div>
     </el-scrollbar>
   </el-card>
-  <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" :align-center="true" destroy-on-close="true">
+  <el-dialog v-model="dialogFormVisible" :title="testname" width="70%" :align-center="true" :destroy-on-close="true">
     <el-scrollbar height="80vh">
-      <survey v-if="title==='评估'" :questionFormid="questionFormid" :infor="test" :testtitle="testtitle" :choice="choice"
-        @sendanswer="getanswer" :madicalRecord="''" />
+      <survey 
+        v-if="title==='评估'" 
+        :questionFormid="questionFormid" 
+        :infor="test" :testtitle="testtitle" :choice="choice"
+        :madicalRecord="''" 
+        v-model="answer"
+      />
       <div v-if="title === '视频'" class="h-[80vh] flex items-center">
         <video v-if="testname !== '愉快事件表具体表格.png'" class="w-full" controls>
           <source :src="videosrc" type="video/quicktime" v-if="testname.slice(-3) === 'mov'">
@@ -42,7 +47,7 @@
 import SvgIcon1 from '../../../components/icons/main.svg'
 import SvgIcon2 from '../../../components/icons/email.svg'
 import SvgIcon3 from '../../../components/icons/account.svg'
-import { ref,onMounted} from 'vue'
+import { ref } from 'vue'
 import survey from '../knowledgeManagement/components/survey.vue'
 import { getkonwledgeAPI, getvideoAPI, gettestAPI } from '@/api/knowledge'
 import {useStore} from '@/stores/knowledge'
@@ -51,6 +56,7 @@ const { source1,answers } = usestore
 const dialogFormVisible = ref(false)
 const testname = ref('')
 const choice = ref<string[] | string[][]>([])
+const answer = ref([])
 type ifo = {
   id: number,
   questionOrder: string,
@@ -68,14 +74,6 @@ const text = ref('')
 const knowledgeindex = ref<number>()
 const videosrc = ref('')
 let source = source1
-
-onMounted(() => {
-  // gettestAPI({ questionForm:1}).then((res:any)=>{
-  //   console.log(res.questionnaires)
-  // }).catch((err:any)=>{
-  //   console.log(err)
-  // })
-})
 
 const open = (select:string,itemtitle:string,index:number) => {
   dialogFormVisible.value = true
