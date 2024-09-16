@@ -120,7 +120,7 @@ const answer = defineModel<string[]>()
     padding: 10px 15px;
 }
 
-.form::v-deep .el-radio-group {
+.form:deep .el-radio-group {
     width: 100%;
     display: flex;
     justify-content: space-between;

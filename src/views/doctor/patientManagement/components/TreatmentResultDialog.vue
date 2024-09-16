@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive,defineEmits} from "vue"
-import { getQuestionnaireResultAPI,getExportTreatmentAPI } from '@/api/patientManage.js'
+import { getQuestionnaireResultAPI } from '@/api/patientManage.js'
 
 interface QuestionnaireResult {
     questionnaireName: string;

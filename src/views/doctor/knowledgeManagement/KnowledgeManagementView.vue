@@ -123,7 +123,7 @@ const open = (select:string,itemtitle:string,index:number) => {
 </script>
 
 <style scoped>
-.svg-icon::v-deep path{
+.svg-icon:deep path{
    fill:#49998F
 }
 
@@ -159,7 +159,7 @@ const open = (select:string,itemtitle:string,index:number) => {
   padding: 10px 15px;
 }
 
-.form::v-deep .el-radio-group{
+.form:deep .el-radio-group{
   width: 100%;
   display: flex;
   justify-content: space-between;
