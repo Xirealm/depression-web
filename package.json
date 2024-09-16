@@ -20,6 +20,7 @@
     "path": "^0.12.7",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^4.0.0-alpha.4",
+    "prismjs": "^1.29.0",
     "sass": "^1.77.6",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
