@@ -96,7 +96,7 @@ const finalpage = ref(0)
 const num = ref<number>(0)
 const route = useRoute()
 //病历号
-const madicalRecord = ref<string>('123456') 
+const madicalRecord = ref<string>('00000') 
 //评分
 const value = ref(0)
 const input = ref('')

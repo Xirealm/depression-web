@@ -1,7 +1,9 @@
 <template>
-    <div v-if="$props.questionFormid !== 4">
+    <div v-if="props.questionFormid !== 4">
         <div class="text-lg text-slate-800 w-full text-wrap">{{ $props.testtitle }}</div>
-        <div v-for="(item, index) in $props.infor.filter((item: ifo) => item.questionOrder !== '0')" :key="index"
+        <div 
+            v-for="(item, index) in questions" 
+            :key="index"
             class="form">
             <div class="question">{{ index + 1 }}. {{ item.questionContext }}</div>
             <el-radio :value="$props.choice[0]" size="large" v-model="answer[index]">{{ $props.choice[0] }}</el-radio>
@@ -10,15 +12,15 @@
             <el-radio :value="$props.choice[3]" size="large" v-model="answer[index]">{{ $props.choice[3] }}</el-radio>
         </div>
     </div>
-    <div v-if="$props.questionFormid === 4">
+    <div v-if="props.questionFormid === 4">
         <div class="text-lg text-slate-800 w-full text-wrap my-2.5">1.{{ $props.testtitle }}</div>
         <div class="table">
             <div class="row flex flex-nowrap">
                 <div class="onerow"></div>
-                <div class="onerow" v-for="(c, i) in $props.choice[0]" :key="i">{{ c }}</div>
+                <div class="onerow" v-for="(c, i) in props.choice[0]" :key="i">{{ c }}</div>
             </div>
         </div>
-        <div class="table" v-for="(item, index) in $props.infor.filter((item: ifo) => item.questionOrder !== '0')"
+        <div class="table" v-for="(item, index) in questions"
             :key="index">
             <div class="choice flex flex-nowrap" v-if="index < 24">
                 <div class="onechoice" style="width: 16%;">C{{index+1+' ' + item.questionContext }}</div>
@@ -43,8 +45,7 @@
                 <div class="onerow" v-for="(c, i) in $props.choice[1]" :key="i">{{ c }}</div>
             </div>
         </div>
-        <div class="table" v-for="(item, index) in $props.infor.filter((item: ifo) => item.questionOrder !== '0')"
-            :key="index">
+        <div class="table" v-for="(item, index) in questions" :key="index">
             <div class="choice flex flex-nowrap" v-if="index > 23 && index <33">
                 <div class="onechoice" style="width: 16%;">C{{ index + 1 + ' ' + item.questionContext }}</div>
                 <div class="flex flex-nowrap" style="width: 80%;">
@@ -68,7 +69,7 @@
                 <div class="onerow" v-for="(c, i) in $props.choice[2]" :key="i">{{ c }}</div>
             </div>
         </div>
-        <div class="table" v-for="(item, index) in $props.infor.filter((item: ifo) => item.questionOrder !== '0')"
+        <div class="table" v-for="(item, index) in questions"
             :key="index">
             <div class="choice flex flex-nowrap" v-if="index > 32">
                 <div class="onechoice" style="width: 16%;">C{{ index + 1 + ' ' + item.questionContext }}</div>
@@ -90,9 +91,8 @@
     <el-button class="mt-7 ml-3" color="#49998F" size="default" @click="submit">提交</el-button>
 </template>
 
-
 <script setup lang="ts">
-import { ref} from 'vue';
+import { ref , computed} from 'vue';
 import { ElMessage } from 'element-plus'
 import { saveNewQuestionnaire } from "@/api/patientFunction"
 type ifo = {
@@ -111,6 +111,11 @@ const props = defineProps<{
     questionFormid:number,
     madicalRecord: string | string[]
 }>()
+const questions = computed(() => {
+    return props.infor.filter((item: ifo) => {
+        return item.questionOrder !== '0'
+    })
+})
 // const send = defineEmits(['sendanswer'])
 let answer = ref<string[]>([])
 // const changeanswer = () =>{

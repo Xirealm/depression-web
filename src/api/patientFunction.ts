@@ -17,9 +17,7 @@ export const getTreatmentPlan = (madicalRecord:string): any => {
  * 患者提交治疗表单
  */
 export const saveNewQuestionnaire = (data:any): any => {
-  return http.post('/newQuestionnaire/saveNewQuestionnaire',{
-    data
-  })
+  return http.post('/newQuestionnaire/saveNewQuestionnaire',data)
 }
 
 /**
