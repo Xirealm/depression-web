@@ -75,12 +75,12 @@ defineExpose({
             </el-table-column>
             <el-table-column label="反馈评分" prop="feedback" align="center">
                 <template #default="scope">
-                    {{ scope.row.feedback.feedbackScore }}
+                    {{ scope.row.feedback?.feedbackScore }}
                 </template>
             </el-table-column>
             <el-table-column label="反馈评价" prop="feedback" align="center">
                 <template #default="scope">
-                    {{ scope.row.feedback.feedbackEvaluate }}
+                    {{ scope.row.feedback?.feedbackEvaluate }}
                 </template>
             </el-table-column>
             <el-table-column label="导出" align="center">

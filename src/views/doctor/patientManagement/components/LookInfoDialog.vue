@@ -19,7 +19,7 @@ interface viewForm {
   familyAddress:string,
   age:null,
   martalStatus:string,
-  treatmentPhase:string
+  // treatmentPhase:string
 }
 const viewPatientForm = ref<viewForm>({
   name: '',
@@ -35,7 +35,7 @@ const viewPatientForm = ref<viewForm>({
   familyAddress: '',
   age: null,
   martalStatus: '',
-  treatmentPhase:''
+  // treatmentPhase:''
 })
 
 const emit = defineEmits(['edited'])
@@ -93,9 +93,9 @@ defineExpose({
       <el-form-item label="职业状况">
         <el-input v-model="viewPatientForm.vocationStatus"></el-input>
       </el-form-item>
-      <el-form-item label="治疗阶段">
+      <!-- <el-form-item label="治疗阶段">
         <el-input v-model="viewPatientForm.treatmentPhase"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="家庭月均收入">
         <el-input v-model="viewPatientForm.monthIncome"></el-input>
       </el-form-item>

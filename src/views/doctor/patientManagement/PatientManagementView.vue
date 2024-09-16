@@ -19,9 +19,8 @@
               <el-select v-model="form.treatmentPhase" style="width: 250px;" clearable>
                 <el-option 
                   v-for="item in TreatmentPhases" 
-                  :label="item" 
-                  :value="item"
-                  :key="item"/>
+                  :label="item" :value="item" :key="item"
+                />
               </el-select> 
             </el-form-item>
             <el-button type="primary" @click="getPatientPage">查询</el-button>
@@ -102,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
+import { ElMessage , ElMessageBox } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
 import { getDeleteByIdAPI } from '@/api/patientManage.js'
 import { getDeleteAPI } from '@/api/patientManage.js'
@@ -189,70 +188,42 @@ const lookInfo = (row: any) => {
   LookInfoRef.value.setEditInfo(row)
 }
 
-//治疗情况
-// let arr=reactive({
-//   list1:[
-//   results[],
-//   treatment,
-//   ],
-//   feedback
-// })
-// const treatmentData = ref([])
 const QuestionnaireResultRef = ref()
 const newArr = ref([])
 const treatmentDialogVisible = ref(false)
 const handleGetted = async (madicalRecord: string,name:string,id:string) => {
-  console.log(madicalRecord);
   await QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord,name,id)
-  // treatmentDialogVisible.value=false
-  // QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
-
 };
 const handleUpdate = (data: any) => {
   newArr.value = data
   treatmentDialogVisible.value = true;
 }
-// const handleUpdate=(data:any)=>{
-//   treatmentData.value=data
-// }
-// // function test (row:any){
-// //   console.log("row",row);
-// //   treatmentDialogVisible.value = true;
-// // }
-// const getQuestionnaireResult=async (madicalRecord:string)=>{
-//   treatmentDialogVisible.value = true
-//   const res=await getQuestionnaireResultAPI(madicalRecord)
-//   console.log(res)
-//   arr.list1=res.results
-// }
 //单条删除 
 const getDeleteById = async (id: number) => {
-  try {
+  ElMessageBox.confirm(
+    '是否确认删除该患者?',
+    '提醒',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+  .then(async() => {
     const res = await getDeleteByIdAPI(id);
-    console.log(res)
     if (res.code === 200) {
       ElMessage({
         message: '删除成功',
-        type: 'success',
-        plain: true,
+        type: 'success'
       });
-      dataTable.list.splice(id, 1)
       getPatientPage();
     } else {
       ElMessage({
         message: '删除失败',
-        type: 'error',
-        plain: true,
+        type: 'error'
       });
     }
-  } catch (error) {
-    console.error('An error occurred:', error);
-    ElMessage({
-      message: '删除过程中发生错误',
-      type: 'error',
-      plain: true,
-    });
-  }
+  })
 };
 
 // //批量删除 
@@ -269,46 +240,36 @@ const getDelete = async () => {
     })
     return
   }
-  try {
-    const ids = selectedPatient.value.map(patient => patient.id).join(',')
+  ElMessageBox.confirm(
+    '是否确认删除所选患者?',
+    '提醒',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+  .then(async() => {
+    const ids = selectedPatient.value.map((patient:any) => patient.id).join(',')
     const res: any = await getDeleteAPI(ids)
     console.log(res)
     if (res.code === 200) {
       ElMessage({
         message: '删除成功',
         type: 'success',
-        plain: true
       })
       getPatientPage()
     } else {
       ElMessage({
         message: '删除失败',
         type: 'error',
-        plain: true
       })
     }
-  } catch (error) {
-    console.error('An error occurred:', error);
-    ElMessage({
-      message: '删除过程中发生错误',
-      type: 'error',
-      plain: true,
-    });
-  }
+  })
 }
-// //导出治疗阶段
-// const PatientsExport = async (id: any, treatmentPhase: any) => {
-//   const res = await getPatientsExportAPI(id, treatmentPhase)
-//   // TreatmentPhases.value=res.data
-//   console.log(res)
-//   getPatientPage()
-// }
-
 // 下发治疗
-const assignTreatmentDialogVisible = ref(false)
 const SendTreatmentDialogRef = ref()
 const distributeTreatment = async (madicalRecord: string) => {
-  // assignTreatmentDialogVisible.value = true;
   SendTreatmentDialogRef.value.open(madicalRecord)
 }
 //结束治疗
@@ -335,5 +296,4 @@ label {
   margin-right: 10px;
   width: 90px;
 }
-
 </style>

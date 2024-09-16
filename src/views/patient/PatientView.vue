@@ -23,7 +23,7 @@
         </video>
         <img v-if="allmes[1][num].filename === '愉快事件表具体表格.png'" :src="allmes[1][num].url">
       </div>
-      <v-md-editor v-if="page > (allmes[0].length + allmes[1].length)" v-model="context" mode="preview"></v-md-editor>
+      <v-md-editor v-if="page >= (allmes[0].length + allmes[1].length)" v-model="context" mode="preview"></v-md-editor>
     </el-scrollbar>
   </el-card>
   <!-- 翻页和评分按钮 -->
@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import Header from './components/Header.vue';
 import survey from '@/views/doctor/knowledgeManagement/components/survey.vue'
-import { onMounted,reactive,ref } from 'vue'
+import { onMounted,reactive,ref,watch } from 'vue'
 import { getTreatmentPlan, userfeedback, postSaveTimeAPI } from "@/api/patientFunction"
 import { formatTime } from '@/utils/time';
 import { useStore } from '@/stores/knowledge'
@@ -106,6 +106,11 @@ const context = ref('')
 const centerDialogVisible  = ref(false)
 //上下页切换
 const page = ref<number>(1)
+watch(page, () => {
+  console.log(page.value);
+}, {
+  immediate:true
+})
 const finalpage = ref(0)
 const num = ref<number>(0)
 //病历号
@@ -143,6 +148,9 @@ onMounted(() => {
     allmes[1] = res.video === undefined ? [] : res.video
     allmes[2] = res.article === undefined ? [] : res.article
     finalpage.value = allmes[0].length + allmes[1].length + allmes[2].length
+    if (page.value > allmes[0].length + allmes[1].length) {
+      context.value = allmes[2][num.value].context
+    }
   })
 })
 //切换页码

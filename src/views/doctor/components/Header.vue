@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore()
 const router = useRouter()
 const logout = () => {
     router.push("/login")
@@ -18,9 +20,12 @@ const logout = () => {
             }" active-class="active-item">
                 <span class="menu-item">知识库管理</span>
             </RouterLink>
-            <RouterLink :to="{
-                name:'accountManagement',
-            }" active-class="active-item">
+            <RouterLink 
+                v-if="userStore.user.type === 'admin'"
+                :to="{
+                    name:'accountManagement',
+                }" 
+                active-class="active-item">
                 <span class="menu-item">账号管理</span>
             </RouterLink>
         </div>

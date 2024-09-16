@@ -26,8 +26,6 @@ const login = async () => {
     } else {
         ElMessage.error(res.msg)
     }
-    // router.push('/patient');
-    // router.push({ name: 'patient', params: { id: loginData.value.medicalRecord } });
 };
 </script>
 

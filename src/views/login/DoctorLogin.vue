@@ -4,6 +4,9 @@ import { useRouter } from 'vue-router';
 import Button from './components/Button.vue';
 import Header from './components/Header.vue';
 import { postDoctorLoginAPI } from '@/api/user';
+import { ElMessage } from "element-plus";
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
 
 const router = useRouter();
 const returnLogin = () => {
@@ -15,11 +18,20 @@ const loginData = ref({
     password: '',
 })
 const login = async () => {
-    // const res = await postDoctorLoginAPI(loginData.value.username, loginData.value.password)
-    // if (res.code === 0) {
-    //     router.push('/doctor/patientManagement');
-    // }
-    router.push('/doctor/patientManagement');
+    const res = await postDoctorLoginAPI(loginData.value.username, loginData.value.password)
+    console.log(res);
+    
+    if (res.code === 0) {
+        ElMessage.success("登录成功")
+        if (loginData.value.username === "admin") {
+            userStore.setUser(loginData.value.username,"admin")
+        }else{
+            userStore.setUser(loginData.value.username,"doctor")
+        }
+        router.push('/doctor/patientManagement');
+    } else {
+        ElMessage.error(res.msg)
+    }
 };
 </script>
 
