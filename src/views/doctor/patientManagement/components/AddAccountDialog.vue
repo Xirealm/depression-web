@@ -91,7 +91,10 @@ const handleSave = async () => {
         <el-input v-model="ruleForm.nation"></el-input>
       </el-form-item>
       <el-form-item label="婚姻状况" prop="martalStatus">
-        <el-input v-model="ruleForm.martalStatus"></el-input>
+        <el-select v-model="ruleForm.martalStatus">
+          <el-option label="未婚" value="未婚"></el-option>
+          <el-option label="已婚" value="已婚"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="职业状况" prop="vocationStatus">
         <el-input v-model="ruleForm.vocationStatus"></el-input>

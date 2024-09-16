@@ -79,10 +79,6 @@ const editUsername = (username:string) => {
       @click="addAccountVisible = true">
       新增账号
     </el-button>
-    <!-- <el-button 
-      type="danger" >
-      批量删除
-    </el-button> -->
     </div>
     <el-table 
       :data="filterTableData" 

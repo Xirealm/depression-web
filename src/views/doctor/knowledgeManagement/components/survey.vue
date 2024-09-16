@@ -89,7 +89,7 @@
         </div>
     </div>
     <div class="flex justify-center">
-        <el-button class="mt-5 mb-1 ml-3 w-[100px]" type="primary" round size="large" @click="submit">提交</el-button>
+        <el-button class="mt-5 mb-1 w-[100px]" type="primary" round size="large" @click="submit">提交</el-button>
     </div>
 </template>
 

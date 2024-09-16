@@ -5,13 +5,19 @@ import { ElMessage } from "element-plus";
 const isShow = defineModel()
 const account = ref({
     userName: '',
-    userType: '',
+    userType: '医生',
     password: ''
 })
+const reset = () => {
+    account.value.userName = "",
+    account.value.userType = '医生',
+    account.value.password = ''
+}
 const emit = defineEmits(['added'])
 const addAccount = async () => {
     isShow.value = false
     const result = await postaddAccountAPI(account.value.userName, account.value.userType, account.value.password)
+    reset()
     if (result.code === 0) {
         ElMessage.success('添加成功')
         emit('added')
@@ -25,7 +31,7 @@ const addAccount = async () => {
     <el-dialog v-model="isShow" title="新增账号" width="500" :align-center="true">
         <el-form :model="account" label-width="60">
             <el-form-item label="用户名" >
-            <el-input v-model="account.userName" placeholder="请输入用户名"/>
+                <el-input v-model="account.userName" placeholder="请输入用户名"/>
             </el-form-item>
             <el-form-item label="角色">
                 <el-select v-model="account.userType" placeholder="请选择角色">

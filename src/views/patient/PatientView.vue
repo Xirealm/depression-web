@@ -1,7 +1,7 @@
 <template>
   <Header />
-  <el-card class="mx-8 py-4 mt-6">
-    <el-scrollbar height="70vh">
+  <el-card class="mx-auto mt-6 w-3/5">
+    <el-scrollbar height="72vh">
       <div>
         <survey 
           v-if = "page <= allmes[0].length" 
@@ -15,10 +15,10 @@
       </div>
       <div v-if="page > allmes[0].length && page <= (allmes[1].length + allmes[0].length)"
         class="h-[70vh] flex items-center justify-center">
-        <video v-if="allmes[1][num].filename.slice(-3) === 'mp4'" class="h-full" controls>
+        <video v-if="allmes[1][num].filename.slice(-3) === 'mp4'" class="w-full" controls>
           <source :src="allmes[1][num].url" type="video/mp4">
         </video>
-        <video v-if="allmes[1][num].filename.slice(-3) === 'mov'" class="h-full" controls>
+        <video v-if="allmes[1][num].filename.slice(-3) === 'mov'" class="w-full" controls>
           <source :src="allmes[1][num].url" type="video/quicktime">
         </video>
         <img v-if="allmes[1][num].filename === '愉快事件表具体表格.png'" :src="allmes[1][num].url">
@@ -29,7 +29,7 @@
   <!-- 翻页和评分按钮 -->
   <div class="flex justify-end px-9">
     <!-- <el-button type="warning" class="mt-7" round @click="centerDialogVisible = true">评分</el-button> -->
-    <div class="mt-7">
+    <div class="mt-7 mx-auto">
       <el-button type="primary" size="large" @click="pageup"
         :disabled="page === 1">上一页</el-button>
       <el-button type="primary" size="large" @click="pagedown"
