@@ -5,9 +5,12 @@ import Button from './components/Button.vue';
 import Header from './components/Header.vue';
 import { getPatientLoginAPI } from "@/api/user"
 const router = useRouter();
+import { useUserStore } from "@/stores/user";
+import { ElMessage } from "element-plus";
+const userStore = useUserStore()
 // 返回选择角色
 const returnLogin = () => {
-    router.push('/login'); // 路由配置中的路径
+    router.push('/login');
 };
 
 const loginData = ref({
@@ -15,17 +18,21 @@ const loginData = ref({
 })
 
 const login = async () => {
-    // const res = await getPatientLoginAPI(loginData.value.medicalRecord)
-    // if (res.code === 0) {
-    //     router.push('/patient');
-    // }
+    const res = await getPatientLoginAPI(loginData.value.medicalRecord)
+    if (res.code === 0) {
+        ElMessage.success("登录成功")
+        userStore.setUser(loginData.value.medicalRecord,"patient")
+        router.push('/patient');
+    } else {
+        ElMessage.error(res.msg)
+    }
     // router.push('/patient');
-    router.push({ name: 'patient', params: { id: loginData.value.medicalRecord } });
+    // router.push({ name: 'patient', params: { id: loginData.value.medicalRecord } });
 };
 </script>
 
 <template>
-    <Header></Header>
+    <Header />
     <Button class="mx-[15vw] mt-[10vh]" @click="returnLogin">
         返回
     </Button>

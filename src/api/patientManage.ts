@@ -43,7 +43,6 @@ export const getDeleteByIdAPI=(id:Number):any=>{
   }
 
   //分页列表  &&  条件查询
-  
   // export const getPatientPageAPI=(currentPage:Number,pageSize:Number):any=>{
   //   return http.post(`patients/page?currentPage={currentPage}&pageSize={pageSize}`,{
   //       currentPage,
@@ -84,7 +83,7 @@ export const getDeleteByIdAPI=(id:Number):any=>{
     })
   }
   //导出治疗阶段
-  export const getPatientsExportAPI=(id:number,treatmentPhase:number)=>{
+  export const getExportTreatmentAPI = (id:string,treatmentPhase:string)=>{
     return http.get(`/patients/export?userId=${id}&treatmentPhase=${treatmentPhase}`,{
     })
   }

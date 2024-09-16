@@ -88,7 +88,9 @@
             </div>
         </div>
     </div>
-    <el-button class="mt-7 ml-3" color="#49998F" size="default" @click="submit">提交</el-button>
+    <div class="flex justify-center">
+        <el-button class="mt-5 mb-1 ml-3 w-[100px]" type="primary" round size="large" @click="submit">提交</el-button>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -108,7 +110,8 @@ const props = defineProps<{
     infor:ifo[],
     testtitle:string,
     choice:string[] | string[][],
-    questionFormid:number,
+    questionFormid: number,
+    treatmentPhase?:string
     madicalRecord: string | string[]
 }>()
 const questions = computed(() => {
@@ -130,7 +133,7 @@ const submit = () =>{
     })
     return
   }
-//   send('sendanswer', answer)
+    //send('sendanswer', answer)
     let newQuestions: newq[] = []
     let order = 1
     answer.value.forEach((item)=>{
@@ -143,10 +146,9 @@ const submit = () =>{
     let save = {
         madicalRecord:props.madicalRecord,
         questionForm:props.questionFormid,
-        treatment:'1',
+        treatment:props.treatmentPhase,
         newQuestions: newQuestions
     }
-    console.log(save)
     saveNewQuestionnaire(save).then((res:any)=>{
         ElMessage({
             message: '提交成功.',

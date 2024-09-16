@@ -3,9 +3,15 @@
   <el-card class="mx-8 py-4 mt-6">
     <el-scrollbar height="70vh">
       <div>
-        <survey v-if="page <= allmes[0].length" :questionFormid="allmes[0][num].questionForm"
-          :infor="allmes[0][num].newQuestionsVO" :testtitle="testtitle[num]" :choice="choices[num]"
-          :madicalRecord="madicalRecord" />
+        <survey 
+          v-if = "page <= allmes[0].length" 
+          :questionFormid = "allmes[0][num].questionForm"
+          :infor = "allmes[0][num].newQuestionsVO" 
+          :testtitle = "testtitle[num]" 
+          :choice = "choices[num]"
+          :madicalRecord = "madicalRecord" 
+          :treatmentPhase = "treatmentPhase"
+        />
       </div>
       <div v-if="page > allmes[0].length && page <= (allmes[1].length + allmes[0].length)"
         class="h-[70vh] flex items-center justify-center">
@@ -21,13 +27,14 @@
     </el-scrollbar>
   </el-card>
   <!-- 翻页和评分按钮 -->
-  <div class="flex justify-between px-9">
-    <el-button type="warning" class="my-7" round @click="centerDialogVisible = true">评分</el-button>
-    <div>
-      <el-button class="my-7" color="#49998F" size="default" @click="pageup"
-        :disabled="page === 1 ? true : false">上一页</el-button>
-      <el-button class="my-7 ml-5" color="#49998F" size="default" @click="pagedown"
-        :disabled="page === finalpage ? true : false">下一页</el-button>
+  <div class="flex justify-end px-9">
+    <!-- <el-button type="warning" class="mt-7" round @click="centerDialogVisible = true">评分</el-button> -->
+    <div class="mt-7">
+      <el-button type="primary" size="large" @click="pageup"
+        :disabled="page === 1">上一页</el-button>
+      <el-button type="primary" size="large" @click="pagedown"
+        :disabled="page === finalpage">下一页</el-button>
+      <el-button type="primary" size="large" @click="finishTreatment" :disabled="page !== finalpage">完成治疗</el-button>  
     </div>
   </div>
   <!-- 评分弹框 -->
@@ -51,9 +58,10 @@
 import Header from './components/Header.vue';
 import survey from '@/views/doctor/knowledgeManagement/components/survey.vue'
 import { onMounted,reactive,ref } from 'vue'
-import { getTreatmentPlan, userfeedback } from "@/api/patientFunction"
+import { getTreatmentPlan, userfeedback, postSaveTimeAPI } from "@/api/patientFunction"
+import { formatTime } from '@/utils/time';
 import { useStore } from '@/stores/knowledge'
-import { useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user';
 import { ElMessage } from 'element-plus'
 type ifo = {
   id: number,
@@ -80,11 +88,17 @@ type plan = {
   msg: string,
   questionnaire: oneNaire[],
   article: arti[],
-  video: ved[]
+  video: ved[],
+  treatmentPhase:string
 }
+const userStore = useUserStore()
 // const commitanswer = ref<string[]>([])
 const usestore = useStore()
 const { answers } = usestore
+const time = ref({
+  begin: new Date(),
+  end: new Date()
+})
 let allmes: any[][] = reactive([[],[],[]])
 let choices: any[] = reactive([])
 let testtitle: any[] = reactive([])
@@ -94,16 +108,19 @@ const centerDialogVisible  = ref(false)
 const page = ref<number>(1)
 const finalpage = ref(0)
 const num = ref<number>(0)
-const route = useRoute()
 //病历号
-const madicalRecord = ref<string>('00000') 
+const madicalRecord = ref<string>("") 
+//治疗阶段
+const treatmentPhase = ref<string>("")
 //评分
 const value = ref(0)
 const input = ref('')
-onMounted(()=>{
-  console.log(route)
+onMounted(() => {
+  time.value!.begin = new Date()
+  madicalRecord.value = userStore.user.account
   getTreatmentPlan(madicalRecord.value).then((res: plan) => {
     console.log(res)
+    treatmentPhase.value = res.treatmentPhase
     if (res.questionnaire !== undefined) {
       res.questionnaire.forEach((item) => {
         item.newQuestionsVO.forEach((item: ifo) => {
@@ -204,6 +221,24 @@ const feedback = () =>{
       type: 'warning',
     })
   })
+}
+const finishTreatment = async () => {
+  time.value!.end = new Date()
+  const completeTime = formatTime(time.value.end)
+  const finishTime = Math.ceil(((Number(time.value.end) - Number(time.value.begin)) / 1000 / 60))
+  const res = await postSaveTimeAPI({
+    madicalRecord: madicalRecord.value,
+    completeTime: completeTime,
+    finishTime: finishTime,
+    treatment: treatmentPhase.value
+  })
+  if (res.code === 0) {
+    ElMessage({
+      message: '恭喜你，已完成全部治疗！',
+      type: 'success',
+    })
+    centerDialogVisible.value = true
+  }
 }
 </script>
 

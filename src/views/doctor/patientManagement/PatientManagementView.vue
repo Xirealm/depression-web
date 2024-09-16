@@ -54,7 +54,7 @@
         </el-table-column>
         <el-table-column label="治疗详情" prop="detail" align="center">
           <template #default="scope">
-            <el-link type="primary" @click="handleGetted(scope.row.madicalRecord)">治疗情况</el-link>
+            <el-link type="primary" @click="handleGetted(scope.row.madicalRecord,scope.row.name,scope.row.id)">治疗情况</el-link>
           </template>
         </el-table-column>
         <el-table-column label="个人信息" prop="assignment" align="center">
@@ -67,7 +67,7 @@
           <template #default="scope">
             <el-button 
               type="primary" size="small" plain
-              @click="distributeTreatment(scope.row.madicalRecord, scope.row.questionnaireId, scope.row.articleId, scope.row.videoName)">
+              @click="distributeTreatment(scope.row.madicalRecord)">
               下发治疗
             </el-button>
             <el-button 
@@ -94,24 +94,6 @@
       />
     </div>
   </el-card>
-
-  <!-- <el-dialog
-    v-model="treatmentDialogVisible"
-    title="治疗情况"
-    width="40%">
-    <div v-for="(item,index) in treatmentData" :key="index">
-      <h3>治疗编号:{{ item.treatment }}</h3>
-      <p>完成时间：{{ item.finishTime }}</p>
-      <div v-for="(result,index) in item.questionnaireRecords" :key="index">
-        <h4>{{ result.questionnaireName }}</h4>
-        <p>结果:{{ result.questionnaireResult }}</p>
-      </div>
-      <p>反馈评分:{{ item.feedback.feedbackScore }}</p>
-      <p>反馈评价:{{ item.feedback.feedbackEvaluate }}</p>
-      <p>完成时间:{{ item.completeTime }}</p>
-    </div>
-  </el-dialog> -->
-
   <AddAccountDialog v-model="dialogVisible" @added="getPatientPage" />
   <LookInfoDialog v-model="viewDialogVisible" ref="LookInfoRef" @edited="getPatientPage" />
   <SendTreatmentDialog ref="SendTreatmentDialogRef" @sended="getPatientPage" />
@@ -123,11 +105,9 @@
 import { ElMessage } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
 import { getDeleteByIdAPI } from '@/api/patientManage.js'
-import { getCountAPI } from '@/api/patientManage.js'
 import { getDeleteAPI } from '@/api/patientManage.js'
 import { getPatientPageAPI } from '@/api/patientManage.js'
 import { getEndPatientAPI } from '@/api/patientManage.js'
-import { getPatientsExportAPI } from '@/api/patientManage.js'
 // import {getQuestionnaireResultAPI} from '@/api/patientManage.js'
 import AddAccountDialog from './components/AddAccountDialog.vue'
 import LookInfoDialog from './components/LookInfoDialog.vue'
@@ -154,14 +134,6 @@ const TreatmentPhases = ['未开始','已结束', '第一次','第二次','第�
 
 //分页
 const total = ref(0)
-// const getCount = async () => {
-//   const res = await getCountAPI()
-//   console.log(res)
-// }
-const handleSizeChange = (val: any) => {
-  page.pageSize = val
-  getPatientPage()
-}
 const handlePageChange = (val: any) => {
   page.currentPage = val
   getPatientPage()
@@ -180,7 +152,6 @@ const page = reactive({
 // const data = reactive({})
 const getPatientPage = async () => {
   const res = await getPatientPageAPI(page.currentPage, page.pageSize, form.name, form.madicalRecord, form.treatmentPhase, form.sex)
-  console.log(res)
   if(res.code === 200){
     dataTable.list = res.data
     total.value = res.total
@@ -230,9 +201,9 @@ const lookInfo = (row: any) => {
 const QuestionnaireResultRef = ref()
 const newArr = ref([])
 const treatmentDialogVisible = ref(false)
-const handleGetted = async (madicalRecord: string) => {
+const handleGetted = async (madicalRecord: string,name:string,id:string) => {
   console.log(madicalRecord);
-  await QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
+  await QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord,name,id)
   // treatmentDialogVisible.value=false
   // QuestionnaireResultRef.value.getQuestionnaireResult(madicalRecord)
 
@@ -325,18 +296,18 @@ const getDelete = async () => {
     });
   }
 }
-//导出治疗阶段
-const PatientsExport = async (id: any, treatmentPhase: any) => {
-  const res = await getPatientsExportAPI(id, treatmentPhase)
-  // TreatmentPhases.value=res.data
-  console.log(res)
-  getPatientPage()
-}
+// //导出治疗阶段
+// const PatientsExport = async (id: any, treatmentPhase: any) => {
+//   const res = await getPatientsExportAPI(id, treatmentPhase)
+//   // TreatmentPhases.value=res.data
+//   console.log(res)
+//   getPatientPage()
+// }
 
 // 下发治疗
 const assignTreatmentDialogVisible = ref(false)
 const SendTreatmentDialogRef = ref()
-const distributeTreatment = async (madicalRecord: string, questionnaireId: string, articleId: string, videoName: string) => {
+const distributeTreatment = async (madicalRecord: string) => {
   // assignTreatmentDialogVisible.value = true;
   SendTreatmentDialogRef.value.open(madicalRecord)
 }
